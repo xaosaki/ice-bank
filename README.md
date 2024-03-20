@@ -1,2 +1,3 @@
-# ice-interview-task-boilerplate
+# interview-task-boilerplate
+
 IcePanel engineering interview task boilerplate
