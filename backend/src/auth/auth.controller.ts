@@ -1,6 +1,12 @@
 import { Body, Controller, Headers, HttpCode, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiBearerAuth, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse
+} from '@nestjs/swagger';
 import { LocalAuthGuard } from '../common/guards/local-auth.guard';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RegisterDTO } from './dto/register.dto';
@@ -14,7 +20,7 @@ import { ErrorResponseDTO } from '../common/dto/error-response.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @ApiOkResponse({
+  @ApiCreatedResponse({
     description: 'Successful registration',
     type: RegisterResponseDTO
   })

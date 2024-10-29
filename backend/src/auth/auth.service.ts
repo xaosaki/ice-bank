@@ -6,18 +6,22 @@ import { InjectModel } from '@nestjs/sequelize';
 import { User } from '../common/models/user.model';
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { Counter } from 'prom-client';
-import { BlacklistToken } from '../common/models/blacklist-token.model';
 import { UniqueConstraintError } from 'sequelize';
 import { LoginResponseDTO } from './dto/login-response.dto';
+import { TokenService } from '../common/modules/token/token.service';
+import { Account } from '../common/models/account.model';
+import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User)
     private readonly userModel: typeof User,
-    @InjectModel(BlacklistToken)
-    private readonly blacklistToken: typeof BlacklistToken,
+    @InjectModel(Account)
+    private readonly accountModel: typeof Account,
+    private readonly sequelize: Sequelize,
     private jwtService: JwtService,
+    private tokenService: TokenService,
     @InjectMetric('login_count') public loginCount: Counter<string>,
     @InjectMetric('registrations_count') public registerCount: Counter<string>
   ) {}
@@ -42,16 +46,33 @@ export class AuthService {
   }
 
   async register(registerDTO: RegisterDTO) {
+    const transaction = await this.sequelize.transaction();
+
     try {
       const passwordHash = await bcrypt.hash(registerDTO.password, 10);
       const user = await this.userModel
-        .create({ ...registerDTO, passwordHash })
+        .create({ ...registerDTO, passwordHash }, { transaction })
         .then((model) => model.toDTO());
+
+      // TODO: Don't forget to remove in real world
+      await this.accountModel.create(
+        {
+          accountId: crypto.randomUUID(),
+          userId: user.userId,
+          balance: 1000,
+          currency: 'CAD'
+        },
+        { transaction }
+      );
+
+      await transaction.commit();
 
       this.registerCount.inc();
 
       return user;
     } catch (error: any) {
+      await transaction.rollback();
+
       if (error instanceof UniqueConstraintError) {
         const message = error.errors.map((e) => `${e.path} must be unique`).join(', ');
 
@@ -63,14 +84,6 @@ export class AuthService {
   }
 
   async logout(token: string): Promise<void> {
-    const decodedToken = this.jwtService.decode(token) as { exp: number };
-    const expiresAt = new Date(decodedToken.exp * 1000);
-
-    await this.blacklistToken.create({ token, expiresAt });
-  }
-
-  async isTokenBlacklisted(token: string): Promise<boolean> {
-    const blacklistEntry = await this.blacklistToken.findOne({ where: { token } });
-    return !!blacklistEntry;
+    await this.tokenService.addTokenToBlacklist(token);
   }
 }

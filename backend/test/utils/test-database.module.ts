@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { User } from '../../src/common/models/user.model';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -17,8 +16,7 @@ dotenv.config();
       autoLoadModels: true,
       synchronize: true
       // logging: false
-    }),
-    SequelizeModule.forFeature([User])
+    })
   ],
   exports: [SequelizeModule]
 })

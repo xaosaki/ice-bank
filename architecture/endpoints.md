@@ -123,7 +123,6 @@
       "accountId": "string",
       "amount": "number",
       "description": "string",
-      "note": "string",
       "date": "string",
       "category": "string",
       "merchant": {
@@ -152,7 +151,8 @@
       "name": "string",
       "logo": "string (optional)",
       "mcc": "string (optional)"
-    }
+    },
+    "note": "string"
   }
   ```
 - **Response**: Created transaction details
@@ -178,6 +178,7 @@
       "id": "string",
       "mcc": "string"
     },
+    "note": "string",
     "receipt": "string (URL or path)"
   }
   ```

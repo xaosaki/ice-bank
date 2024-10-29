@@ -5,9 +5,11 @@ import * as bcrypt from 'bcrypt';
 import { TestDatabaseModule } from './utils/test-database.module';
 import { AuthModule } from '../src/auth/auth.module';
 import { User } from '../src/common/models/user.model';
-import { faker } from '@faker-js/faker';
 import { JwtService } from '@nestjs/jwt';
 import { BlacklistToken } from '../src/common/models/blacklist-token.model';
+import { TokenModule } from '../src/common/modules/token/token.module';
+import { getFakeUser } from './utils/utils';
+import { Account } from '../src/common/models/account.model';
 
 describe('AuthEndpoints (e2e)', () => {
   let app: INestApplication;
@@ -15,7 +17,7 @@ describe('AuthEndpoints (e2e)', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [TestDatabaseModule, AuthModule]
+      imports: [TestDatabaseModule, TokenModule, AuthModule]
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -29,29 +31,39 @@ describe('AuthEndpoints (e2e)', () => {
   });
 
   describe('/v1/auth/register (POST)', () => {
-    it('should register a new user', async () => {
-      const fakeUser = getFakeUser();
+    it('should register a new user and create an account', async () => {
+      const fakeUser = await getFakeUser();
       const response = await request(app.getHttpServer())
         .post('/v1/auth/register')
         .send(fakeUser)
         .expect(201);
 
-      const { password, ...expectedUser } = fakeUser;
+      const { password, passwordHash, ...expectedUser } = fakeUser;
       expect(response.body).toEqual(expectedUser);
+
+      const user = await User.findOne({ where: { email: fakeUser.email } });
+      expect(user).not.toBeNull();
+
+      const account = await Account.findOne({ where: { userId: user!.userId } });
+      expect(account).not.toBeNull();
+      expect(Number(account!.balance)).toBe(1000);
+      expect(account!.currency).toBe('CAD');
     });
 
     it('should not allow duplicate registration', async () => {
-      const fakeUser = getFakeUser();
-      await request(app.getHttpServer()).post('/v1/auth/register').send(fakeUser);
-
+      const fakeUser = await getFakeUser();
+      await request(app.getHttpServer()).post('/v1/auth/register').send(fakeUser).expect(201);
       await request(app.getHttpServer()).post('/v1/auth/register').send(fakeUser).expect(400);
     });
   });
 
   describe('/v1/auth/login (POST)', () => {
-    const { password, ...user } = getFakeUser();
+    let password: any, user: any;
 
     beforeAll(async () => {
+      const fakeUser = await getFakeUser();
+      password = fakeUser.password;
+      user = fakeUser;
       const passwordHash = await bcrypt.hash(password, 10);
       await User.create({ ...user, passwordHash });
     });
@@ -78,7 +90,7 @@ describe('AuthEndpoints (e2e)', () => {
 
   describe('/v1/auth/logout (POST)', () => {
     it('should log out the user and blacklist the token', async () => {
-      const { password, ...user } = getFakeUser();
+      const { password, ...user } = await getFakeUser();
       const passwordHash = await bcrypt.hash(password, 10);
       const testToken = jwtService.sign({ username: user.email, sub: user.userId });
       await User.create({ ...user, passwordHash });
@@ -101,15 +113,3 @@ describe('AuthEndpoints (e2e)', () => {
     });
   });
 });
-
-function getFakeUser() {
-  return {
-    userId: faker.string.uuid(),
-    email: faker.internet.email(),
-    password: faker.internet.password({ length: 6 }),
-    firstName: faker.person.firstName(),
-    lastName: faker.person.lastName(),
-    middleName: faker.person.middleName(),
-    phone: faker.phone.number({ style: 'national' })
-  };
-}

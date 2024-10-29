@@ -30,7 +30,8 @@
 | account_id     | UUID          | No       | Foreign Key to `accounts.account_id`   |
 | user_id        | UUID          | No       | Foreign Key to `users.user_id`         |
 | amount         | DECIMAL(12,2) | No       |                                        |
-| description    | TEXT          | Yes      |                                        |
+| description    | TEXT          | No       |                                        |
+| note           | TEXT          | Yes      |                                        |
 | date           | TIMESTAMP     | No       | Default: CURRENT_TIMESTAMP             |
 | category       | VARCHAR       | No       |                                        |
 | merchant_id    | UUID          | Yes      | Foreign Key to `merchants.merchant_id` |

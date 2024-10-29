@@ -7,6 +7,8 @@ import * as dotenv from 'dotenv';
 import { AuthModule } from './auth/auth.module';
 import { HealthController } from './health/health.controller';
 import { ScheduleModule } from '@nestjs/schedule';
+import { AccountsModule } from './accounts/accounts.module';
+import { TokenModule } from './common/modules/token/token.module';
 
 dotenv.config();
 
@@ -20,12 +22,14 @@ dotenv.config();
       password: process.env.DB_PASSWORD || 'password',
       database: process.env.DB_NAME || 'database',
       autoLoadModels: true,
-      synchronize: true
-      // logging: false
+      synchronize: true,
+      logging: process.env.ENV !== 'PROD'
     }),
     PrometheusModule.register(),
     ScheduleModule.forRoot(),
-    AuthModule
+    TokenModule,
+    AuthModule,
+    AccountsModule
   ],
   controllers: [HealthController],
   providers: [

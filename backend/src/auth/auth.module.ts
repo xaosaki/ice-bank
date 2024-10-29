@@ -7,10 +7,10 @@ import * as dotenv from 'dotenv';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from '../common/models/user.model';
 import { makeCounterProvider } from '@willsoto/nestjs-prometheus';
-import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
-import { BlacklistToken } from '../common/models/blacklist-token.model';
 import { TokenCleanupService } from './token-cleanup.service';
+import { JwtStrategy } from '../common/strategies/jwt.strategy';
+import { Account } from '../common/models/account.model';
 
 dotenv.config();
 
@@ -21,8 +21,7 @@ dotenv.config();
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: process.env.JWT_EXPIRE_TIME }
     }),
-    SequelizeModule.forFeature([User]),
-    SequelizeModule.forFeature([BlacklistToken])
+    SequelizeModule.forFeature([User, Account])
   ],
   providers: [
     AuthService,
