@@ -1,5 +1,6 @@
-import { Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, ForeignKey, HasMany, Model, Table } from 'sequelize-typescript';
 import { User } from './user.model';
+import { Transaction } from './transaction.model';
 
 @Table({
   tableName: 'accounts',
@@ -33,4 +34,7 @@ export class Account extends Model {
     defaultValue: 'CAD'
   })
   currency: 'CAD' | 'USD';
+
+  @HasMany(() => Transaction)
+  transactions: Transaction[];
 }

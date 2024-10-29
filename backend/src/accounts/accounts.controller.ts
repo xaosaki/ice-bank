@@ -16,12 +16,12 @@ import { AccountTransactionDTO } from './dto/account-transaction.dto';
 @ApiTags('accounts')
 @ApiUnauthorizedResponse({ description: 'Unauthorized', type: ErrorResponseDTO })
 @ApiInternalServerErrorResponse({ description: 'Error', type: ErrorResponseDTO })
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('v1/accounts')
 export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
 
-  @ApiBearerAuth()
   @ApiOkResponse({
     description: 'List of accounts',
     type: [AccountDTO]
@@ -37,7 +37,6 @@ export class AccountsController {
     }));
   }
 
-  @ApiBearerAuth()
   @ApiOkResponse({
     description: 'List of transactions for the account',
     type: [AccountTransactionDTO]

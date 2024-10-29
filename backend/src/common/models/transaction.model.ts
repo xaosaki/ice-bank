@@ -76,4 +76,7 @@ export class Transaction extends Model {
 
   @BelongsTo(() => Merchant)
   merchant: Merchant;
+
+  @BelongsTo(() => Account)
+  account: Account;
 }

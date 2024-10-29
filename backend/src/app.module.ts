@@ -9,6 +9,7 @@ import { HealthController } from './health/health.controller';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AccountsModule } from './accounts/accounts.module';
 import { TokenModule } from './common/modules/token/token.module';
+import { TransactionsModule } from './transactions/transactions.module';
 
 dotenv.config();
 
@@ -29,7 +30,8 @@ dotenv.config();
     ScheduleModule.forRoot(),
     TokenModule,
     AuthModule,
-    AccountsModule
+    AccountsModule,
+    TransactionsModule
   ],
   controllers: [HealthController],
   providers: [
