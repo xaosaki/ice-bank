@@ -245,6 +245,7 @@
 - **URL**: `/splits/outgoing/{splitId}`
 - **Response**: Success message
 - **Note**: Check that split `from_user_id` is current user
+- **Note**: Also change status for all parts from `Pending` to `Canceled` 
 
 ### List + Filter by Transaction
 - **Method**: `GET`
@@ -323,7 +324,8 @@
         "phone": "string (or null)"
       },
       "receipt": "string",
-      "status": "enum(Pending, Completed, Canceled)"
+      "answerStatus": "enum('Accepted', 'Declined', 'Pending', 'Canceled')",
+      "splitStatus": "enum(Pending, Completed, Canceled)"
     }
   ]
   ```
@@ -351,7 +353,9 @@
     },
     "transactionId": "string",
     "receipt": "string",
-    "status": "enum(Pending, Completed, Canceled)"
+    "comment": "string (or null)",
+    "answerStatus": "enum('Accepted', 'Declined', 'Pending', 'Canceled')",
+    "splitStatus": "enum(Pending, Completed, Canceled)"
   }
   ```
 - **Note**: Check that split `users` contains current user
@@ -362,8 +366,10 @@
 - **Request Body**:
   ```json
   {
-    "action": "accept/decline"
+    "action": "accept/decline",
+    "comment": "string (or null)"
   }
   ```
 - **Response**: Success message
 - **Note**: Check that split `users` contains current user
+- **Note**: Move split to `Completed` if there is no pending parts

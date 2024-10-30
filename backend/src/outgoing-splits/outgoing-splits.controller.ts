@@ -17,6 +17,7 @@ import {
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse
 } from '@nestjs/swagger';
@@ -55,8 +56,13 @@ export class OutgoingSplitsController {
     description: 'Splits list',
     type: [OutgoingSplitDTO]
   })
+  @ApiQuery({
+    name: 'transactionId',
+    required: false,
+    description: 'Optional transaction ID to filter the splits'
+  })
   @Get()
-  async getSplits(@Query('transactionId') transactionId: string, @Request() req: any) {
+  async getSplits(@Query('transactionId') transactionId: string | undefined, @Request() req: any) {
     const userId = req.user.userId;
     return this.splitsService.getSplits(transactionId, userId);
   }

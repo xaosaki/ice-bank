@@ -11,6 +11,7 @@ import { AccountsModule } from './accounts/accounts.module';
 import { TokenModule } from './common/modules/token/token.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { OutgoingSplitsModule } from './outgoing-splits/outgoing-splits.module';
+import { IncomingSplitsModule } from './incoming-splits/incoming-splits.module';
 
 dotenv.config();
 
@@ -33,7 +34,8 @@ dotenv.config();
     AuthModule,
     AccountsModule,
     TransactionsModule,
-    OutgoingSplitsModule
+    OutgoingSplitsModule,
+    IncomingSplitsModule
   ],
   controllers: [HealthController],
   providers: [

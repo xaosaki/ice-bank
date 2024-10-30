@@ -34,7 +34,8 @@ export class OutgoingSplitDTO {
       {
         userId: '00000000-0000-4000-8000-000000000004',
         amount: 50.0,
-        status: 'Pending'
+        status: 'Pending',
+        comment: 'Thanks for the dinner!'
       }
     ]
   })
@@ -53,7 +54,8 @@ export class OutgoingSplitDTO {
     this.users = parts.map((part) => ({
       userId: part.userId,
       amount: Number(part.amount),
-      status: part.status
+      status: part.status,
+      comment: part.comment
     }));
   }
 }

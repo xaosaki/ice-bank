@@ -70,22 +70,42 @@ export class OutgoingSplitsService {
   }
 
   async cancelSplit(splitId: string, userId: string) {
+    const transaction = await this.sequelize.transaction();
     const split = await this.splitModel.findByPk(splitId);
     if (!split || split.fromUserId !== userId) {
       throw new ForbiddenException('Unauthorized to cancel this split');
     }
 
-    await split.update({ status: 'Canceled' });
-    return { message: 'Split canceled successfully' };
+    try {
+      await this.splitPartModel.update(
+        { status: 'Canceled' },
+        { where: { splitId, status: 'Pending' }, transaction }
+      );
+
+      await split.update({ status: 'Canceled' }, { transaction });
+
+      await transaction.commit();
+
+      return { message: 'Split canceled successfully' };
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
   }
 
-  async getSplits(transactionId: string, userId: string) {
-    return this.splitModel
-      .findAll({
-        where: { transactionId, fromUserId: userId },
-        include: [SplitPart]
-      })
-      .then((models) => models.map((model) => new OutgoingSplitDTO(model, model.users)));
+  async getSplits(transactionId: string | undefined, userId: string) {
+    const whereCondition: any = { fromUserId: userId };
+
+    if (transactionId) {
+      whereCondition.transactionId = transactionId;
+    }
+
+    const splits = await this.splitModel.findAll({
+      where: whereCondition,
+      include: [SplitPart]
+    });
+
+    return splits.map((model) => new OutgoingSplitDTO(model, model.users));
   }
 
   async getSplitById(splitId: string, userId: string) {

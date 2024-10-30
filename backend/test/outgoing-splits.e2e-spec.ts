@@ -22,6 +22,7 @@ describe('OutgoingSplitsController (e2e)', () => {
   let recipientUser: User;
   let token: string;
   let transaction: Transaction;
+  let transaction2: Transaction;
   let merchant: Merchant;
 
   beforeAll(async () => {
@@ -65,6 +66,17 @@ describe('OutgoingSplitsController (e2e)', () => {
       userId: testUser.userId,
       amount: 200.0,
       description: 'Group Dinner',
+      date: new Date(),
+      category: 'Dining',
+      merchant: merchant.merchantId
+    });
+
+    transaction2 = await Transaction.create({
+      transactionId: faker.string.uuid(),
+      accountId: faker.string.uuid(),
+      userId: testUser.userId,
+      amount: 400.0,
+      description: 'Group Breakfast',
       date: new Date(),
       category: 'Dining',
       merchant: merchant.merchantId
@@ -136,6 +148,30 @@ describe('OutgoingSplitsController (e2e)', () => {
       expect(canceledSplit.status).toBe('Canceled');
     });
 
+    it('should cancel the split and all pending parts', async () => {
+      await SplitPart.create({
+        partId: faker.string.uuid(),
+        splitId: split.splitId,
+        userId: recipientUser.userId,
+        amount: 50.0,
+        status: 'Pending'
+      });
+
+      await request(app.getHttpServer())
+        .delete(`/v1/splits/outgoing/${split.splitId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+
+      const updatedSplit = (await Split.findByPk(split.splitId)) as Split;
+      expect(updatedSplit.status).toBe('Canceled');
+
+      const canceledParts = await SplitPart.findAll({
+        where: { splitId: split.splitId, status: 'Canceled' }
+      });
+
+      expect(canceledParts).toHaveLength(1);
+    });
+
     it('should return 401 if token is missing', async () => {
       await request(app.getHttpServer()).delete(`/v1/splits/outgoing/${split.splitId}`).expect(401);
     });
@@ -153,15 +189,37 @@ describe('OutgoingSplitsController (e2e)', () => {
         transactionName: transaction.description,
         transactionLogo: merchant.logo
       });
+
+      await Split.create({
+        splitId: faker.string.uuid(),
+        transactionId: transaction2.transactionId,
+        amount: 200.0,
+        fromUserId: testUser.userId,
+        status: 'Pending',
+        transactionDate: transaction.date,
+        transactionName: transaction.description,
+        transactionLogo: merchant.logo
+      });
     });
 
-    it('should return a list of splits', async () => {
+    it('should return all splits for the user when no transactionId is provided', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/v1/splits/outgoing')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+
+      expect(response.body).toBeInstanceOf(Array);
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should return filtered splits when transactionId is provided', async () => {
       const response = await request(app.getHttpServer())
         .get('/v1/splits/outgoing')
         .query({ transactionId: transaction.transactionId })
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
 
+      expect(response.body).toBeInstanceOf(Array);
       expect(response.body).toHaveLength(1);
       expect(response.body[0]).toHaveProperty('splitId');
       expect(response.body[0].fromUserId).toBe(testUser.userId);

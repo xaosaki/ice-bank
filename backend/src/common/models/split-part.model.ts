@@ -1,4 +1,4 @@
-import { Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
+import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
 import { User } from './user.model';
 import { Split } from './split.model';
 
@@ -22,6 +22,9 @@ export class SplitPart extends Model {
   @ForeignKey(() => Split)
   @Column(DataType.UUID)
   splitId: string;
+
+  @BelongsTo(() => Split)
+  split: Split;
 
   @Column({
     type: DataType.DECIMAL(12, 2),
