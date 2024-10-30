@@ -10,6 +10,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { AccountsModule } from './accounts/accounts.module';
 import { TokenModule } from './common/modules/token/token.module';
 import { TransactionsModule } from './transactions/transactions.module';
+import { OutgoingSplitsModule } from './outgoing-splits/outgoing-splits.module';
 
 dotenv.config();
 
@@ -31,7 +32,8 @@ dotenv.config();
     TokenModule,
     AuthModule,
     AccountsModule,
-    TransactionsModule
+    TransactionsModule,
+    OutgoingSplitsModule
   ],
   controllers: [HealthController],
   providers: [

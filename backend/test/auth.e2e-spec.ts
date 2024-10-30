@@ -10,6 +10,9 @@ import { BlacklistToken } from '../src/common/models/blacklist-token.model';
 import { TokenModule } from '../src/common/modules/token/token.module';
 import { getFakeUser } from './utils/utils';
 import { Account } from '../src/common/models/account.model';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { Merchant } from '../src/common/models/merchant.model';
+import { Transaction } from '../src/common/models/transaction.model';
 
 describe('AuthEndpoints (e2e)', () => {
   let app: INestApplication;
@@ -17,7 +20,12 @@ describe('AuthEndpoints (e2e)', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [TestDatabaseModule, TokenModule, AuthModule]
+      imports: [
+        TestDatabaseModule,
+        TokenModule,
+        SequelizeModule.forFeature([Transaction, Merchant]),
+        AuthModule
+      ]
     }).compile();
 
     app = moduleFixture.createNestApplication();
