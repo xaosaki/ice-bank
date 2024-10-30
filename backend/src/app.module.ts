@@ -13,6 +13,7 @@ import { TransactionsModule } from './transactions/transactions.module';
 import { OutgoingSplitsModule } from './outgoing-splits/outgoing-splits.module';
 import { IncomingSplitsModule } from './incoming-splits/incoming-splits.module';
 import { FriendsModule } from './friends/friends.module';
+import { ProfileModule } from './profile/profile.module';
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ dotenv.config();
     ScheduleModule.forRoot(),
     TokenModule,
     AuthModule,
+    ProfileModule,
     AccountsModule,
     TransactionsModule,
     OutgoingSplitsModule,
