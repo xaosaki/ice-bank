@@ -96,6 +96,17 @@
   ]
   ```
 
+## Add Friend
+- **Method**: `POST`
+- **URL**: `/friends/{userId}`
+- **Response**: Success message
+
+## Remove Friend
+- **Method**: `DELETE`
+- **URL**: `/friends/{userId}`
+- **Response**: Success message
+
+
 # Accounts Endpoints
 
 ## Get Accounts
