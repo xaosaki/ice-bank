@@ -6,3 +6,5 @@
 *.launch
 .settings/
 *.sublime-workspace
+
+/frontend/src_draft
