@@ -1,12 +1,12 @@
 import type {
-  OutgoingSplitGroup,
+  OutSplitGroup,
   OutSplit,
   OutSplitResponse,
   OutSplitStatus
 } from '@/stores/interfaces/OutSplitInterfaces';
 import { mapOutSplit } from '@/stores/mappers/out-split/OutSplitMapper';
 
-export function mapOutSplitResponsesToGroup(splits: OutSplitResponse[]): OutgoingSplitGroup[] {
+export function mapOutSplitResponsesToGroup(splits: OutSplitResponse[]): OutSplitGroup[] {
   const sortedSplits = splits.sort(
     (a, b) => new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime()
   );

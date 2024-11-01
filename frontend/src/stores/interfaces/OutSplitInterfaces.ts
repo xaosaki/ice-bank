@@ -1,7 +1,7 @@
 export type OutSplitStatus = 'Pending' | 'Completed' | 'Canceled';
 export type OutSplitPartStatus = 'Accepted' | 'Declined' | 'Pending' | 'Canceled';
 
-export interface OutgoingSplitGroup {
+export interface OutSplitGroup {
   status: OutSplitStatus;
   splits: OutSplit[];
 }
@@ -30,13 +30,13 @@ export interface OutSplitResponse {
 }
 
 export interface OutSplitUser {
-  user: OutgoingSplitUserDetails;
+  user: OutSplitUserDetails;
   amount: number;
   status: OutSplitPartStatus;
   comment: string;
 }
 
-export interface OutgoingSplitUserDetails {
+export interface OutSplitUserDetails {
   userId: string;
   email: string;
   firstName: string;

@@ -4,15 +4,15 @@ import { useRoute, useRouter } from 'vue-router';
 import { useOutSplitStore } from '@/stores/OutSplitStore';
 import { useStatusStore } from '@/stores/StatusStore';
 
-const outgoingSplitsStore = useOutSplitStore();
+const outSplitsStore = useOutSplitStore();
 const statusStore = useStatusStore();
 const route = useRoute();
 const router = useRouter();
 
-const split = computed(() => outgoingSplitsStore.selected);
+const split = computed(() => outSplitsStore.selected);
 
 const handleCancelClick = async () => {
-  await outgoingSplitsStore.cancelSelected();
+  await outSplitsStore.cancelSelected();
   statusStore.$patch({
     status: 'OK',
     action: 'Cancel',
@@ -27,13 +27,13 @@ onMounted(async () => {
   const idFromUrl = route.params.splitId as string | undefined;
 
   if (idFromUrl) {
-    outgoingSplitsStore.selectedId = idFromUrl;
-    await outgoingSplitsStore.fetchSelectedSplit();
+    outSplitsStore.selectedId = idFromUrl;
+    await outSplitsStore.fetchSelected();
   }
 });
 
 onBeforeUnmount(async () => {
-  outgoingSplitsStore.$reset();
+  outSplitsStore.$reset();
 });
 </script>
 

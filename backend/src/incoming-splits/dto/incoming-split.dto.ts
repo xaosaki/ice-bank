@@ -27,7 +27,7 @@ export class IncomingSplitDTO {
   receipt: string | null;
 
   @ApiProperty({ example: 'Pending' })
-  answerStatus: 'Pending' | 'Completed' | 'Canceled';
+  answerStatus: 'Accepted' | 'Declined' | 'Pending' | 'Canceled';
 
   @ApiProperty({ example: 'Pending' })
   splitStatus: 'Pending' | 'Completed' | 'Canceled';

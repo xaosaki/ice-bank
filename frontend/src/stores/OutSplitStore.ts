@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import axiosWithToken from '@/api/AxiosWithToken';
 import type {
-  OutgoingSplitGroup,
   OutSplit,
+  OutSplitGroup,
   OutSplitResponse
 } from '@/stores/interfaces/OutSplitInterfaces';
 import { mapOutSplitResponsesToGroup } from '@/stores/mappers/out-split/OutSplitGroupMapper';
@@ -12,12 +12,12 @@ const OUT_SPLIT_URL = '/api/v1/splits/outgoing';
 
 export const useOutSplitStore = defineStore('out-split', {
   state: () => ({
-    list: [] as OutgoingSplitGroup[],
+    list: [] as OutSplitGroup[],
     selectedId: null as string | null,
     selected: null as OutSplit | null
   }),
   actions: {
-    async fetchOutgoingSplits() {
+    async fetchList() {
       try {
         const response = await axiosWithToken.get<OutSplitResponse[]>(`${OUT_SPLIT_URL}`);
         this.list = mapOutSplitResponsesToGroup(response.data);
@@ -25,7 +25,7 @@ export const useOutSplitStore = defineStore('out-split', {
         console.log('Error', e);
       }
     },
-    async fetchSelectedSplit() {
+    async fetchSelected() {
       try {
         const response = await axiosWithToken.get<OutSplitResponse>(
           `${OUT_SPLIT_URL}/${this.selectedId}`

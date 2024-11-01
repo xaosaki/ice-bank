@@ -10,6 +10,8 @@ import SplitCreateParamsView from '@/views/split-create/SplitCreateParamsView.vu
 import StatusView from '@/views/StatusView.vue';
 import OutSplitListView from '@/views/out-split/OutSplitListView.vue';
 import OutSplitView from '@/views/out-split/OutSplitView.vue';
+import InSplitListView from '@/views/in-split/InSplitListView.vue';
+import InSplitView from '@/views/in-split/InSplitView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -57,6 +59,16 @@ const router = createRouter({
       path: '/out-splits/:splitId',
       name: 'outSplitDetails',
       component: OutSplitView
+    },
+    {
+      path: '/in-splits',
+      name: 'inSplits',
+      component: InSplitListView
+    },
+    {
+      path: '/in-splits/:splitId',
+      name: 'inSplitDetails',
+      component: InSplitView
     },
     {
       path: '/login',

@@ -5,7 +5,7 @@ import { useOutSplitStore } from '@/stores/OutSplitStore';
 const outSplitStore = useOutSplitStore();
 
 onMounted(async () => {
-  await outSplitStore.fetchOutgoingSplits();
+  await outSplitStore.fetchList();
 });
 
 onBeforeUnmount(async () => {
@@ -31,5 +31,7 @@ onBeforeUnmount(async () => {
     </ul>
   </div>
 
+  <RouterLink to="/in-splits">To incoming</RouterLink>
+  <br />
   <RouterLink to="/accounts">To accounts</RouterLink>
 </template>
