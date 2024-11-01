@@ -3,11 +3,18 @@ import { useUserStore } from '@/stores/UserStore';
 import { onBeforeUnmount, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAccountStore } from '@/stores/AccountStore';
+import { useTransactionStore } from '@/stores/TransactionStore';
 
 const userStore = useUserStore();
 const accountsStore = useAccountStore();
+const transactionStore = useTransactionStore();
 const route = useRoute();
 const router = useRouter();
+
+const handleGenerateTransactionClick = async () => {
+  await transactionStore.generateTransaction(accountsStore.selectedAccountId!);
+  await accountsStore.loadTransactions();
+};
 
 watch(
   () => accountsStore.selectedAccountId,
@@ -53,6 +60,7 @@ onBeforeUnmount(async () => {
       </li>
     </ul>
     <h3>Transactions for selected account:</h3>
+    <button @click="handleGenerateTransactionClick" type="button">Generate transaction</button>
     <ul>
       <li v-for="(group, id) of accountsStore.transactions" :key="id">
         {{ group.date }} | {{ group.totalAmount }}
