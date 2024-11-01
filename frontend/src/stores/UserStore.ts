@@ -4,26 +4,26 @@ import router from '@/router/Router';
 import axiosWithToken from '@/api/AxiosWithToken';
 import type {
   LoginParams,
-  LoginResponseDTO,
-  ProfileDTO,
+  LoginResponse,
+  Profile,
   RegisterParams
 } from '@/stores/interfaces/UserInterfaces';
 
 export const useUserStore = defineStore('user', {
   state: () => ({
     token: localStorage.getItem('token'),
-    user: {} as ProfileDTO,
+    user: {} as Profile,
     serverError: null
   }),
   actions: {
     async login(params: LoginParams) {
       this.serverError = null;
       try {
-        const response = await axios.post<LoginResponseDTO>(`/api/v1/auth/login`, params);
+        const response = await axios.post<LoginResponse>(`/api/v1/auth/login`, params);
         this.token = response.data.accessToken;
         localStorage.setItem('token', response.data.accessToken);
         await this.fetchProfile();
-        await router.push(`/`);
+        await router.push(`/accounts`);
       } catch (e: any) {
         console.log('Error during login', e);
         this.serverError = e.response?.data?.message || null;
@@ -44,7 +44,7 @@ export const useUserStore = defineStore('user', {
 
     async fetchProfile() {
       try {
-        const response = await axiosWithToken.get<ProfileDTO>(`/api/v1/profile`);
+        const response = await axiosWithToken.get<Profile>(`/api/v1/profile`);
         this.user = response.data;
       } catch (e) {
         console.log('Error', e);
@@ -55,7 +55,7 @@ export const useUserStore = defineStore('user', {
       try {
         await axiosWithToken.post(`/api/v1/auth/logout`);
         this.token = null;
-        this.user = {} as ProfileDTO;
+        this.user = {} as Profile;
         localStorage.removeItem('token');
         router.push(`/login`).then();
       } catch (e) {

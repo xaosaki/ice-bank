@@ -1,16 +1,22 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LoginView from '@/views/LoginView.vue';
 import RegisterView from '@/views/RegisterView.vue';
-import HomeView from '@/views/HomeView.vue';
 import { useUserStore } from '@/stores/UserStore';
+import AccountsView from '@/views/AccountsView.vue';
+import TransactionView from '@/views/TransactionView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: HomeView
+      path: '/accounts/:accountId?',
+      name: 'accounts',
+      component: AccountsView
+    },
+    {
+      path: '/transactions/:transactionId',
+      name: 'transactionDetails',
+      component: TransactionView
     },
     {
       path: '/login',

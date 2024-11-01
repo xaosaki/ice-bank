@@ -1,4 +1,4 @@
-export interface ProfileDTO {
+export interface Profile {
   userId: string;
   email: string;
   firstName: string;
@@ -8,7 +8,7 @@ export interface ProfileDTO {
   phone: string | null;
 }
 
-export interface LoginResponseDTO {
+export interface LoginResponse {
   readonly userId: string;
   readonly accessToken: string;
 }
