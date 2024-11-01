@@ -243,9 +243,19 @@
       "fromUserId": "string",
       "users": [
         {
-          "userId": "string",
-          "amount": "number"
-        }
+           "user": {
+             "userId": "string",
+             "email": "string",
+             "firstName": "string",
+             "lastName": "string",
+             "middleName": "string (or null)",
+             "avatar": "string (or null)",
+             "phone": "string (or null)"
+           },
+           "amount": "number",
+           "status": "enum('Accepted', 'Declined', 'Pending', 'Canceled')",
+           "comment": "string or null"
+         }
       ]
     }
   ```
@@ -277,9 +287,19 @@
       "fromUserId": "string",
       "users": [
         {
-          "userId": "string",
-          "amount": "number"
-        }
+           "user": {
+             "userId": "string",
+             "email": "string",
+             "firstName": "string",
+             "lastName": "string",
+             "middleName": "string (or null)",
+             "avatar": "string (or null)",
+             "phone": "string (or null)"
+           },
+           "amount": "number",
+           "status": "enum('Accepted', 'Declined', 'Pending', 'Canceled')",
+           "comment": "string or null"
+         }
       ]
     }
   ]
@@ -289,26 +309,36 @@
 ### Details by ID
 - **Method**: `GET`
 - **URL**: `/splits/outgoing/{splitId}`
-- **Response**: Split details
-  ```json
-  {
-    "splitId": "string",
-    "receipt": "string",
-    "amount": "number",
-    "status": "enum(Pending, Completed, Canceled)",
-    "transactionId": "string",
-    "transactionName": "string",
-    "transactionDate": "string",
-    "transactionLogo": "string",
-    "fromUserId": "string",
-    "users": [
-      {
-        "userId": "string",
-        "amount": "number"
-      }
-    ]
-  }
-  ```
+  - **Response**: Split details
+    ```json
+    {
+      "splitId": "string",
+      "receipt": "string",
+      "amount": "number",
+      "status": "enum(Pending, Completed, Canceled)",
+      "transactionId": "string",
+      "transactionName": "string",
+      "transactionDate": "string",
+      "transactionLogo": "string",
+      "fromUserId": "string",
+      "users": [
+        {
+           "user": {
+             "userId": "string",
+             "email": "string",
+             "firstName": "string",
+             "lastName": "string",
+             "middleName": "string (or null)",
+             "avatar": "string (or null)",
+             "phone": "string (or null)"
+           },
+           "amount": "number",
+           "status": "enum('Accepted', 'Declined', 'Pending', 'Canceled')",
+           "comment": "string or null"
+         }
+      ]
+    }
+    ```
 - **Note**: Check that split `from_user_id` is current user
 
 ## Incoming Splits

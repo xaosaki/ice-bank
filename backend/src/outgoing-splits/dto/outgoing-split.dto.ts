@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { SplitPart } from '../../common/models/split-part.model';
+import { OutgoingSplitUserDTO } from './os-user.dto';
 
 export class OutgoingSplitDTO {
   @ApiProperty({ example: '00000000-0000-4000-8000-000000000002' })
@@ -39,7 +40,12 @@ export class OutgoingSplitDTO {
       }
     ]
   })
-  users: Array<{ userId: string; amount: number; status: string }>;
+  users: Array<{
+    user: OutgoingSplitUserDTO;
+    amount: number;
+    status: string;
+    comment: string | null;
+  }>;
 
   constructor(split: any, parts: SplitPart[]) {
     this.splitId = split.splitId;
@@ -52,7 +58,7 @@ export class OutgoingSplitDTO {
     this.status = split.status;
     this.fromUserId = split.fromUserId;
     this.users = parts.map((part) => ({
-      userId: part.userId,
+      user: new OutgoingSplitUserDTO(part.user),
       amount: Number(part.amount),
       status: part.status,
       comment: part.comment

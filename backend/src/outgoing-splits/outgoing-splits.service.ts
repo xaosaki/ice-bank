@@ -6,6 +6,7 @@ import { SplitPart } from '../common/models/split-part.model';
 import { Transaction } from '../common/models/transaction.model';
 import { Sequelize } from 'sequelize-typescript';
 import { OutgoingSplitDTO } from './dto/outgoing-split.dto';
+import { User } from '../common/models/user.model';
 
 @Injectable()
 export class OutgoingSplitsService {
@@ -63,7 +64,17 @@ export class OutgoingSplitsService {
 
     const split = (await this.splitModel.findOne({
       where: { splitId: createSplitDto.splitId },
-      include: [SplitPart]
+      include: [
+        {
+          model: SplitPart,
+          include: [
+            {
+              model: User,
+              attributes: ['userId', 'email', 'firstName', 'lastName', 'middleName', 'phone']
+            }
+          ]
+        }
+      ]
     })) as Split;
 
     return new OutgoingSplitDTO(split, split.users);
@@ -102,7 +113,17 @@ export class OutgoingSplitsService {
 
     const splits = await this.splitModel.findAll({
       where: whereCondition,
-      include: [SplitPart]
+      include: [
+        {
+          model: SplitPart,
+          include: [
+            {
+              model: User,
+              attributes: ['userId', 'email', 'firstName', 'lastName', 'middleName', 'phone']
+            }
+          ]
+        }
+      ]
     });
 
     return splits.map((model) => new OutgoingSplitDTO(model, model.users));
@@ -111,7 +132,17 @@ export class OutgoingSplitsService {
   async getSplitById(splitId: string, userId: string) {
     const split = await this.splitModel.findOne({
       where: { splitId, fromUserId: userId },
-      include: [SplitPart]
+      include: [
+        {
+          model: SplitPart,
+          include: [
+            {
+              model: User,
+              attributes: ['userId', 'email', 'firstName', 'lastName', 'middleName', 'phone']
+            }
+          ]
+        }
+      ]
     });
     if (!split) {
       throw new NotFoundException('Split not found');

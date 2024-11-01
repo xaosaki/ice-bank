@@ -1,28 +1,34 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { useSelectedTransactionStore } from '@/stores/TransactionsStore';
+import router from '@/router/Router';
+import { useTransactionStore } from '@/stores/TransactionStore';
 
-const transactionStore = useSelectedTransactionStore();
+const transactionStore = useTransactionStore();
 const route = useRoute();
-const transaction = computed(() => transactionStore.transaction);
+const transaction = computed(() => transactionStore.selected);
+
+const handleSplitClick = async () => {
+  await router.push(`/split-create/${transactionStore.selectedId}/friend-selector`);
+};
 
 onMounted(async () => {
   const idFromUrl = route.params.transactionId as string | undefined;
 
   if (idFromUrl) {
-    transactionStore.selectTransactionId(idFromUrl);
+    transactionStore.setTransactionId(idFromUrl);
     await transactionStore.fetchTransaction();
   }
 });
 
 onBeforeUnmount(async () => {
-  transactionStore.selectTransactionId(null);
+  transactionStore.$reset();
 });
 </script>
 
 <template>
   <div>
+    <button @click="router.back()" type="button">Back</button>
     <h3>Transaction details:</h3>
     {{ transaction.date }}
     <br />
@@ -31,5 +37,6 @@ onBeforeUnmount(async () => {
     {{ transaction.amount }}
     <br />
     {{ transaction.note }}
+    <button @click="handleSplitClick" type="button">Create split</button>
   </div>
 </template>

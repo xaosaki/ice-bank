@@ -19,6 +19,9 @@ export class SplitPart extends Model {
   @Column(DataType.UUID)
   userId: string;
 
+  @BelongsTo(() => User)
+  user: User;
+
   @ForeignKey(() => Split)
   @Column(DataType.UUID)
   splitId: string;

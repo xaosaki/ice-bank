@@ -9,6 +9,9 @@ import type {
   RegisterParams
 } from '@/stores/interfaces/UserInterfaces';
 
+const AUTH_URL = '/api/v1/auth';
+const PROFILE_URL = '/api/v1/profile';
+
 export const useUserStore = defineStore('user', {
   state: () => ({
     token: localStorage.getItem('token'),
@@ -19,7 +22,7 @@ export const useUserStore = defineStore('user', {
     async login(params: LoginParams) {
       this.serverError = null;
       try {
-        const response = await axios.post<LoginResponse>(`/api/v1/auth/login`, params);
+        const response = await axios.post<LoginResponse>(`${AUTH_URL}/login`, params);
         this.token = response.data.accessToken;
         localStorage.setItem('token', response.data.accessToken);
         await this.fetchProfile();
@@ -34,7 +37,7 @@ export const useUserStore = defineStore('user', {
       this.serverError = null;
       try {
         const userId = crypto.randomUUID();
-        await axios.post(`/api/v1/auth/register`, { ...params, userId });
+        await axios.post(`${AUTH_URL}/register`, { ...params, userId });
         await this.login({ email: params.email, password: params.password });
       } catch (e: any) {
         console.log('Error during registration', e);
@@ -44,7 +47,7 @@ export const useUserStore = defineStore('user', {
 
     async fetchProfile() {
       try {
-        const response = await axiosWithToken.get<Profile>(`/api/v1/profile`);
+        const response = await axiosWithToken.get<Profile>(`${PROFILE_URL}`);
         this.user = response.data;
       } catch (e) {
         console.log('Error', e);
@@ -53,7 +56,7 @@ export const useUserStore = defineStore('user', {
 
     async logout() {
       try {
-        await axiosWithToken.post(`/api/v1/auth/logout`);
+        await axiosWithToken.post(`${AUTH_URL}/logout`);
         this.token = null;
         this.user = {} as Profile;
         localStorage.removeItem('token');

@@ -105,7 +105,7 @@ describe('OutgoingSplitsController (e2e)', () => {
       expect(response.body.fromUserId).toBe(testUser.userId);
       expect(Number(response.body.amount)).toBe(100.0);
       expect(response.body.users).toHaveLength(1);
-      expect(response.body.users[0].userId).toBe(recipientUser.userId);
+      expect(response.body.users[0].user.userId).toBe(recipientUser.userId);
     });
 
     it('should return 401 if token is missing', async () => {

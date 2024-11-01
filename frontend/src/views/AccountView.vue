@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/UserStore';
-import { useAccountsStore } from '@/stores/AccountsStore';
 import { onBeforeUnmount, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useAccountStore } from '@/stores/AccountStore';
 
 const userStore = useUserStore();
-const accountsStore = useAccountsStore();
+const accountsStore = useAccountStore();
 const route = useRoute();
 const router = useRouter();
 
@@ -68,4 +68,6 @@ onBeforeUnmount(async () => {
     </ul>
     <button v-if="userStore.isAuthenticated" type="button" @click="userStore.logout">Logout</button>
   </div>
+
+  <RouterLink to="/out-splits">To outgoing splits</RouterLink>
 </template>

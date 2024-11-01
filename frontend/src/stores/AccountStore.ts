@@ -1,13 +1,15 @@
 import { defineStore } from 'pinia';
+import axiosWithToken from '@/api/AxiosWithToken';
+import { mapAccountTransactions } from '@/stores/mappers/AccountTransactionsMapper';
 import type {
   Account,
   AccountTransaction,
   AccountTransactionGroup
-} from '@/stores/interfaces/AccountsInterfaces';
-import axiosWithToken from '@/api/AxiosWithToken';
-import { mapAccountTransactions } from '@/stores/mappers/AccountTransactionsMapper';
+} from '@/stores/interfaces/AccountInterfaces';
 
-export const useAccountsStore = defineStore('accounts', {
+const ACCOUNT_URL = '/api/v1/accounts';
+
+export const useAccountStore = defineStore('accounts', {
   state: () => ({
     accounts: [] as Account[],
     selectedAccountId: null as string | null,
@@ -16,7 +18,7 @@ export const useAccountsStore = defineStore('accounts', {
   actions: {
     async fetchAccounts() {
       try {
-        const response = await axiosWithToken.get<Account[]>(`/api/v1/accounts`);
+        const response = await axiosWithToken.get<Account[]>(`${ACCOUNT_URL}`);
         this.accounts = response.data;
         this.selectedAccountId = response.data[0]?.accountId || null;
       } catch (e: any) {
@@ -27,7 +29,7 @@ export const useAccountsStore = defineStore('accounts', {
     async loadTransactions() {
       try {
         const response = await axiosWithToken.get<AccountTransaction[]>(
-          `/api/v1/accounts/${this.selectedAccountId}/transactions`
+          `${ACCOUNT_URL}/${this.selectedAccountId}/transactions`
         );
         this.transactions = mapAccountTransactions(response.data);
       } catch (e: any) {
