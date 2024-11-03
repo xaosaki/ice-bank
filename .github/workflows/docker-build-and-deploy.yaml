@@ -1,0 +1,49 @@
+name: Build and Deploy Docker Images
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Select which image to build"
+        required: true
+        default: "both"
+        type: choice
+        options:
+          - frontend
+          - backend
+          - both
+
+jobs:
+  build-frontend:
+    if: ${{ github.event.inputs.target == 'frontend' || github.event.inputs.target == 'both' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build Frontend Docker Image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/ice-bank-frontend:latest ./frontend
+
+      - name: Push Frontend Docker Image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/ice-bank-frontend:latest
+
+  build-backend:
+    if: ${{ github.event.inputs.target == 'backend' || github.event.inputs.target == 'both' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build Backend Docker Image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/ice-bank-backend:latest ./backend
+
+      - name: Push Backend Docker Image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/ice-bank-backend:latest

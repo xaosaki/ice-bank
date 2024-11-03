@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import axiosWithToken from '@/api/AxiosWithToken';
+import { httpClientWithToken } from '@/api/HttpClient';
 import { mapAccountTransactions } from '@/stores/mappers/AccountTransactionsMapper';
 import type {
   Account,
@@ -18,7 +18,7 @@ export const useAccountStore = defineStore('accounts', {
   actions: {
     async fetchAccounts() {
       try {
-        const response = await axiosWithToken.get<Account[]>(`${ACCOUNT_URL}`);
+        const response = await httpClientWithToken.get<Account[]>(`${ACCOUNT_URL}`);
         this.accounts = response.data;
         this.selectedAccountId = response.data[0]?.accountId || null;
       } catch (e: any) {
@@ -28,7 +28,7 @@ export const useAccountStore = defineStore('accounts', {
 
     async loadTransactions() {
       try {
-        const response = await axiosWithToken.get<AccountTransaction[]>(
+        const response = await httpClientWithToken.get<AccountTransaction[]>(
           `${ACCOUNT_URL}/${this.selectedAccountId}/transactions`
         );
         this.transactions = mapAccountTransactions(response.data);

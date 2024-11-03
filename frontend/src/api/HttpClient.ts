@@ -1,8 +1,13 @@
 import axios from 'axios';
 
-const axiosWithToken = axios.create();
+const httpClient = axios.create({
+  baseURL: (window as any).config.VUE_APP_API_BASE_URL
+});
+const httpClientWithToken = axios.create({
+  baseURL: (window as any).config.VUE_APP_API_BASE_URL
+});
 
-axiosWithToken.interceptors.request.use(
+httpClientWithToken.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
 
@@ -15,7 +20,7 @@ axiosWithToken.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-axiosWithToken.interceptors.response.use(
+httpClientWithToken.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
@@ -27,4 +32,4 @@ axiosWithToken.interceptors.response.use(
   }
 );
 
-export default axiosWithToken;
+export { httpClientWithToken, httpClient };

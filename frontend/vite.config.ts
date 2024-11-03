@@ -8,13 +8,21 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 export default defineConfig({
   plugins: [vue(), vueJsx()],
   server: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3007',
-        changeOrigin: true
-      }
-    }
+    // proxy: {
+    //   '/api': {
+    //     target: 'http://localhost:3007',
+    //     changeOrigin: true
+    //   }
+    // }
   },
+  define:
+    process.env.NODE_ENV !== 'production'
+      ? {
+          'window.config': {
+            VUE_APP_API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:3007'
+          }
+        }
+      : {},
   logLevel: 'info',
   resolve: {
     alias: {

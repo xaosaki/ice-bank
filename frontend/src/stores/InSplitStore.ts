@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import axiosWithToken from '@/api/AxiosWithToken';
+import { httpClientWithToken } from '@/api/HttpClient';
 import type {
   InSplit,
   InSplitGroup,
@@ -19,7 +19,7 @@ export const useInSplitStore = defineStore('in-split', {
   actions: {
     async fetchList() {
       try {
-        const response = await axiosWithToken.get<InSplitResponse[]>(`${IN_SPLIT_URL}`);
+        const response = await httpClientWithToken.get<InSplitResponse[]>(`${IN_SPLIT_URL}`);
         this.list = mapInSplitResponsesToGroup(response.data);
       } catch (e: any) {
         console.log('Error', e);
@@ -27,7 +27,9 @@ export const useInSplitStore = defineStore('in-split', {
     },
     async fetchSelected() {
       try {
-        const response = await axiosWithToken.get<InSplit>(`${IN_SPLIT_URL}/${this.selectedId}`);
+        const response = await httpClientWithToken.get<InSplit>(
+          `${IN_SPLIT_URL}/${this.selectedId}`
+        );
         this.selected = response.data;
       } catch (e: any) {
         console.log('Error', e);
@@ -35,7 +37,7 @@ export const useInSplitStore = defineStore('in-split', {
     },
     async processSelected(processParams: InSplitProcessParams) {
       try {
-        await axiosWithToken.post(`${IN_SPLIT_URL}/${this.selectedId}/process`, processParams);
+        await httpClientWithToken.post(`${IN_SPLIT_URL}/${this.selectedId}/process`, processParams);
       } catch (e: any) {
         console.log('Error', e);
       }

@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
-import axios from 'axios';
 import router from '@/router/Router';
-import axiosWithToken from '@/api/AxiosWithToken';
+import { httpClient, httpClientWithToken } from '@/api/HttpClient';
 import type {
   LoginParams,
   LoginResponse,
@@ -22,7 +21,7 @@ export const useUserStore = defineStore('user', {
     async login(params: LoginParams) {
       this.serverError = null;
       try {
-        const response = await axios.post<LoginResponse>(`${AUTH_URL}/login`, params);
+        const response = await httpClient.post<LoginResponse>(`${AUTH_URL}/login`, params);
         this.token = response.data.accessToken;
         localStorage.setItem('token', response.data.accessToken);
         await this.fetchProfile();
@@ -37,7 +36,7 @@ export const useUserStore = defineStore('user', {
       this.serverError = null;
       try {
         const userId = crypto.randomUUID();
-        await axios.post(`${AUTH_URL}/register`, { ...params, userId });
+        await httpClient.post(`${AUTH_URL}/register`, { ...params, userId });
         await this.login({ email: params.email, password: params.password });
       } catch (e: any) {
         console.log('Error during registration', e);
@@ -47,7 +46,7 @@ export const useUserStore = defineStore('user', {
 
     async fetchProfile() {
       try {
-        const response = await axiosWithToken.get<Profile>(`${PROFILE_URL}`);
+        const response = await httpClientWithToken.get<Profile>(`${PROFILE_URL}`);
         this.user = response.data;
       } catch (e) {
         console.log('Error', e);
@@ -56,7 +55,7 @@ export const useUserStore = defineStore('user', {
 
     async logout() {
       try {
-        await axiosWithToken.post(`${AUTH_URL}/logout`);
+        await httpClientWithToken.post(`${AUTH_URL}/logout`);
         this.token = null;
         this.user = {} as Profile;
         localStorage.removeItem('token');

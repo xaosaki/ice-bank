@@ -21,6 +21,7 @@ describe('OutgoingSplitsController (e2e)', () => {
   let testUser: User;
   let recipientUser: User;
   let token: string;
+  let testAccount: Account;
   let transaction: Transaction;
   let transaction2: Transaction;
   let merchant: Merchant;
@@ -53,6 +54,7 @@ describe('OutgoingSplitsController (e2e)', () => {
     testUser = await User.create(userData);
     recipientUser = await User.create(await getFakeUser());
     token = jwtService.sign({ username: testUser.email, sub: testUser.userId });
+    const accountId = faker.string.uuid();
 
     merchant = await Merchant.create({
       merchantId: faker.string.uuid(),
@@ -60,9 +62,16 @@ describe('OutgoingSplitsController (e2e)', () => {
       logo: 'https://logo.com/amazon.png'
     });
 
+    testAccount = await Account.create({
+      accountId: accountId,
+      userId: testUser.userId,
+      balance: 500.0,
+      currency: 'CAD'
+    });
+
     transaction = await Transaction.create({
       transactionId: faker.string.uuid(),
-      accountId: faker.string.uuid(),
+      accountId: testAccount.accountId,
       userId: testUser.userId,
       amount: 200.0,
       description: 'Group Dinner',
@@ -73,7 +82,7 @@ describe('OutgoingSplitsController (e2e)', () => {
 
     transaction2 = await Transaction.create({
       transactionId: faker.string.uuid(),
-      accountId: faker.string.uuid(),
+      accountId: testAccount.accountId,
       userId: testUser.userId,
       amount: 400.0,
       description: 'Group Breakfast',

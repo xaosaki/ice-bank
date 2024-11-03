@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import axiosWithToken from '@/api/AxiosWithToken';
+import { httpClientWithToken } from '@/api/HttpClient';
 import type {
   OutSplit,
   OutSplitGroup,
@@ -19,7 +19,7 @@ export const useOutSplitStore = defineStore('out-split', {
   actions: {
     async fetchList() {
       try {
-        const response = await axiosWithToken.get<OutSplitResponse[]>(`${OUT_SPLIT_URL}`);
+        const response = await httpClientWithToken.get<OutSplitResponse[]>(`${OUT_SPLIT_URL}`);
         this.list = mapOutSplitResponsesToGroup(response.data);
       } catch (e: any) {
         console.log('Error', e);
@@ -27,7 +27,7 @@ export const useOutSplitStore = defineStore('out-split', {
     },
     async fetchSelected() {
       try {
-        const response = await axiosWithToken.get<OutSplitResponse>(
+        const response = await httpClientWithToken.get<OutSplitResponse>(
           `${OUT_SPLIT_URL}/${this.selectedId}`
         );
         this.selected = mapOutSplit(response.data);
@@ -37,7 +37,7 @@ export const useOutSplitStore = defineStore('out-split', {
     },
     async cancelSelected() {
       try {
-        await axiosWithToken.delete(`${OUT_SPLIT_URL}/${this.selectedId}`);
+        await httpClientWithToken.delete(`${OUT_SPLIT_URL}/${this.selectedId}`);
       } catch (e: any) {
         console.log('Error', e);
       }

@@ -1,7 +1,7 @@
 import type {
   AccountTransaction,
   AccountTransactionGroup
-} from '@/stores/interfaces/AccountsInterfaces';
+} from '@/stores/interfaces/AccountInterfaces';
 
 export function mapAccountTransactions(
   transactions: AccountTransaction[]

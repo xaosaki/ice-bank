@@ -16,6 +16,11 @@ async function bootstrap() {
     ]
   });
 
+  app.enableCors({
+    origin: process.env.UI_HOST,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS'
+  });
+
   const config = new DocumentBuilder()
     .setTitle('API Documentation')
     .setDescription('API documentation Ice-Split')

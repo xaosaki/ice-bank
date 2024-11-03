@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import axiosWithToken from '@/api/AxiosWithToken';
+import { httpClientWithToken } from '@/api/HttpClient';
 import type { Transaction } from '@/stores/interfaces/TransactionInterfaces';
 import { faker } from '@faker-js/faker';
 
@@ -13,7 +13,7 @@ export const useTransactionStore = defineStore('transaction', {
   actions: {
     async fetchTransaction() {
       try {
-        const response = await axiosWithToken.get<Transaction>(
+        const response = await httpClientWithToken.get<Transaction>(
           `${TRANSACTION_URL}/${this.selectedId}`
         );
         this.selected = response.data;
@@ -44,7 +44,7 @@ export const useTransactionStore = defineStore('transaction', {
           },
           note: `Bought ${faker.commerce.product()} and ${faker.commerce.product()}`
         };
-        await axiosWithToken.post(`${TRANSACTION_URL}`, transaction);
+        await httpClientWithToken.post(`${TRANSACTION_URL}`, transaction);
       } catch (e: any) {
         console.log('Error', e);
       }

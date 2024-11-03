@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import axiosWithToken from '@/api/AxiosWithToken';
+import { httpClientWithToken } from '@/api/HttpClient';
 import type { SplitParams, SplitPart } from '@/stores/interfaces/SplitCreateInterfaces';
 import type { Transaction } from '@/stores/interfaces/TransactionInterfaces';
 import type { Friend } from '@/stores/interfaces/FriendInterfaces';
@@ -22,7 +22,7 @@ export const useSplitCreateStore = defineStore('split-create', {
           receipt: null,
           transactionId
         };
-        await axiosWithToken.post(`${SPLIT_CREATE_URL}`, newSplit);
+        await httpClientWithToken.post(`${SPLIT_CREATE_URL}`, newSplit);
       } catch (e: any) {
         console.log('Error', e);
       }
