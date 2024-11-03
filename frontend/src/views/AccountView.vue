@@ -74,8 +74,13 @@ onBeforeUnmount(async () => {
         </ul>
       </li>
     </ul>
-    <button v-if="userStore.isAuthenticated" type="button" @click="userStore.logout">Logout</button>
   </div>
 
   <RouterLink to="/out-splits">To outgoing splits</RouterLink>
+  <br />
+  <RouterLink to="/friends">To friends</RouterLink>
+  <br />
+  <br />
+
+  <button v-if="userStore.isAuthenticated" type="button" @click="userStore.logout">Logout</button>
 </template>

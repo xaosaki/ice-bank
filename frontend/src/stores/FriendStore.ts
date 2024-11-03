@@ -16,6 +16,20 @@ export const useFriendStore = defineStore('friend', {
       } catch (e: any) {
         console.log('Error', e);
       }
+    },
+    async add(userId: string) {
+      try {
+        await httpClientWithToken.post(`${FRIEND_URL}/${userId}`);
+      } catch (e: any) {
+        console.log('Error', e);
+      }
+    },
+    async remove(userId: string) {
+      try {
+        await httpClientWithToken.delete(`${FRIEND_URL}/${userId}`);
+      } catch (e: any) {
+        console.log('Error', e);
+      }
     }
   },
   getters: {}

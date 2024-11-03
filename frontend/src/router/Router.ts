@@ -12,6 +12,7 @@ import OutSplitListView from '@/views/out-split/OutSplitListView.vue';
 import OutSplitView from '@/views/out-split/OutSplitView.vue';
 import InSplitListView from '@/views/in-split/InSplitListView.vue';
 import InSplitView from '@/views/in-split/InSplitView.vue';
+import FriendListView from '@/views/FriendListView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -69,6 +70,11 @@ const router = createRouter({
       path: '/in-splits/:splitId',
       name: 'inSplitDetails',
       component: InSplitView
+    },
+    {
+      path: '/friends',
+      name: 'friends',
+      component: FriendListView
     },
     {
       path: '/login',
