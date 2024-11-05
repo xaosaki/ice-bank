@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted } from 'vue';
 import { useInSplitStore } from '@/stores/InSplitStore';
+import NavBar from '@/components/NavBar.vue';
+import TransactionList from '@/components/TransactionList.vue';
+import SplitsTabBar from '@/components/SplitsTabBar.vue';
+import LargeHeader from '@/components/LargeHeader.vue';
 
 const inSplitStore = useInSplitStore();
 
@@ -9,29 +13,23 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(async () => {
-  inSplitStore.$reset();
+  inSplitStore.$patch({
+    selectedId: null,
+    selected: null
+  });
 });
 </script>
 
 <template>
-  <div>
-    <h3>Incoming splits:</h3>
-    <ul>
-      <li v-for="(group, id) of inSplitStore.list" :key="id">
-        {{ group.status }}
-        <ul>
-          <li v-for="split of group.splits" :key="split.splitId">
-            <RouterLink :to="`/in-splits/${split.splitId}`">
-              {{ split.transactionDate }} | {{ split.fromUser.firstName }}:
-              {{ split.transactionName }} | | {{ split.amountForPay }}
-            </RouterLink>
-          </li>
-        </ul>
-      </li>
-    </ul>
+  <div class="pb-20">
+    <LargeHeader>
+      <h3 class="text-4xl font-medium">Incoming Splits</h3>
+    </LargeHeader>
+    <section class="px-6 pt-8">
+      <SplitsTabBar />
+      <TransactionList :transactions="inSplitStore.list" type="in-split" />
+    </section>
   </div>
 
-  <RouterLink to="/out-splits">To outgoing</RouterLink>
-  <br />
-  <RouterLink to="/accounts">To accounts</RouterLink>
+  <NavBar></NavBar>
 </template>

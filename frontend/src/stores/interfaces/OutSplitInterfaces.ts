@@ -8,7 +8,8 @@ export interface OutSplitGroup {
 
 export type OutSplit = Omit<OutSplitResponse, 'users'> & {
   filledAmount: number;
-  users: OutSplitUserGroup[];
+  usersGrouped: OutSplitUserGroup[];
+  users: OutSplitUser[];
 };
 
 export interface OutSplitUserGroup {

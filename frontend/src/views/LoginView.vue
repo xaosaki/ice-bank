@@ -1,6 +1,14 @@
 <script setup lang="ts">
-import { onBeforeUnmount, reactive } from 'vue';
+import { computed, onBeforeUnmount, reactive } from 'vue';
 import { useUserStore } from '@/stores/UserStore';
+import BaseButton from '@/components/BaseButton.vue';
+import BaseInput from '@/components/BaseInput.vue';
+import BaseLink from '@/components/BaseLink.vue';
+
+interface FormFields {
+  email: string;
+  password: string;
+}
 
 const form = reactive({
   email: '',
@@ -9,43 +17,51 @@ const form = reactive({
 
 const userStore = useUserStore();
 
+const requiredFields: Array<keyof FormFields> = ['email', 'password'];
+
+const isFieldRequired = (field: keyof FormFields) => {
+  return requiredFields.includes(field);
+};
+
+const isFormInvalid = computed(() => {
+  return requiredFields.some((field) => !form[field]);
+});
+
 onBeforeUnmount(() => {
   userStore.serverError = null;
 });
 </script>
 
 <template>
-  <form @submit.prevent="userStore.login(form)">
-    <h2>Login</h2>
+  <div class="flex flex-col items-center justify-between min-h-screen p-6 bg-background">
+    <div class="mt-14 w-full md:w-96 flex flex-col items-center">
+      <h1 class="text-2xl font-medium text-primaryText mb-12">Login</h1>
 
-    <div>
-      <label for="email">Email*</label>
-      <input
-        v-model="form.email"
-        type="text"
-        id="email"
-        name="email"
-        placeholder="example@mail.com"
-        required
-      />
-    </div>
-    <div>
-      <label for="password">Password*</label>
-      <input
-        v-model="form.password"
-        type="password"
-        id="password"
-        name="password"
-        placeholder="********"
-        required
-      />
-    </div>
-    <div v-if="userStore.serverError">{{ userStore.serverError }}</div>
+      <div v-if="userStore.serverError">{{ userStore.serverError }}</div>
+      <form class="w-full">
+        <BaseInput
+          v-model="form.email"
+          placeholder="example@mail.com"
+          label="Email"
+          name="email"
+          class="mb-4"
+          :required="isFieldRequired('email')"
+        />
+        <BaseInput
+          v-model="form.password"
+          placeholder="******"
+          label="Password"
+          name="password"
+          type="password"
+          class="mb-4"
+          :required="isFieldRequired('password')"
+        />
+      </form>
 
-    <div>
-      <button type="submit">Submit</button>
+      <BaseButton class="block w-full mb-4" :disabled="isFormInvalid" @click="userStore.login(form)"
+        >Submit</BaseButton
+      >
+      <BaseLink :to="`/register`">Register</BaseLink>
     </div>
-
-    <RouterLink to="/register">Register</RouterLink>
-  </form>
+  </div>
 </template>

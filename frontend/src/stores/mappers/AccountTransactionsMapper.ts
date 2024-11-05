@@ -12,12 +12,17 @@ export function mapAccountTransactions(
 
   const groupedTransactions: Record<string, AccountTransaction[]> = sortedTransactions.reduce(
     (acc, transaction) => {
-      const date = transaction.date.split('T')[0];
+      const dateObj = new Date(transaction.date);
 
-      if (!acc[date]) {
-        acc[date] = [];
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+
+      if (!acc[formattedDate]) {
+        acc[formattedDate] = [];
       }
-      acc[date].push(transaction);
+      acc[formattedDate].push(transaction);
       return acc;
     },
     {} as Record<string, AccountTransaction[]>

@@ -5,7 +5,8 @@ export function mapOutSplit(split: OutSplitResponse): OutSplit {
   const { users, ...mappedSplitData } = split;
   return {
     ...mappedSplitData,
-    users: mapOutSplitUsers(users),
+    usersGrouped: mapOutSplitUsers(users),
+    users,
     filledAmount: users.reduce((acc, user) => {
       if (user.status === 'Accepted') {
         acc += user.amount;

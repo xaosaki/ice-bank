@@ -1,13 +1,20 @@
 import { defineStore } from 'pinia';
 import { httpClientWithToken } from '@/api/HttpClient';
-import type { Transaction } from '@/stores/interfaces/TransactionInterfaces';
+import type {
+  SplitByTransaction,
+  SplitByTransactionResponse,
+  Transaction
+} from '@/stores/interfaces/TransactionInterfaces';
 import { faker } from '@faker-js/faker';
+import { mapSplitByTransaction } from '@/stores/mappers/transaction/SplitByTransactionMapper';
 
 const TRANSACTION_URL = '/api/v1/transactions';
+const OUT_SPLIT_URL = '/api/v1/splits/outgoing';
 
 export const useTransactionStore = defineStore('transaction', {
   state: () => ({
     selected: {} as Transaction,
+    splitsBySelected: [] as SplitByTransaction[],
     selectedId: null as Transaction['transactionId'] | null
   }),
   actions: {
@@ -21,13 +28,23 @@ export const useTransactionStore = defineStore('transaction', {
         console.log('Error', e);
       }
     },
+    async fetchSplitsByTransaction() {
+      try {
+        const response = await httpClientWithToken.get<SplitByTransactionResponse[]>(
+          `${OUT_SPLIT_URL}?transactionId=${this.selectedId}`
+        );
+        this.splitsBySelected = response.data.map((item) => mapSplitByTransaction(item));
+      } catch (e: any) {
+        console.log('Error', e);
+      }
+    },
     async generateTransaction(accountId: string) {
       try {
         const fakeCompany = faker.company.name();
         const transaction = {
           transactionId: crypto.randomUUID(),
           accountId: accountId,
-          amount: parseFloat(faker.finance.amount({ min: 1, max: 500, dec: 2 })),
+          amount: parseFloat(faker.finance.amount({ min: 1, max: 200, dec: 2 })),
           description: `${fakeCompany} #${faker.number.int(9999)} ${faker.location.city()}`,
           category: faker.helpers.arrayElement([
             'Groceries',

@@ -1,3 +1,5 @@
+import type { OutSplitResponse } from '@/stores/interfaces/OutSplitInterfaces';
+
 export interface Merchant {
   name: string;
   logo?: string;
@@ -16,3 +18,6 @@ export interface Transaction {
   note: string | null;
   receipt: string | null;
 }
+
+export type SplitByTransactionResponse = OutSplitResponse;
+export type SplitByTransaction = OutSplitResponse & { filledAmount: number };

@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted } from 'vue';
 import { useOutSplitStore } from '@/stores/OutSplitStore';
+import NavBar from '@/components/NavBar.vue';
+import TransactionList from '@/components/TransactionList.vue';
+import SplitsTabBar from '@/components/SplitsTabBar.vue';
+import LargeHeader from '@/components/LargeHeader.vue';
 
 const outSplitStore = useOutSplitStore();
 
@@ -14,24 +18,15 @@ onBeforeUnmount(async () => {
 </script>
 
 <template>
-  <div>
-    <h3>Outgoing splits:</h3>
-    <ul>
-      <li v-for="(group, id) of outSplitStore.list" :key="id">
-        {{ group.status }}
-        <ul>
-          <li v-for="split of group.splits" :key="split.splitId">
-            <RouterLink :to="`/out-splits/${split.splitId}`">
-              {{ split.transactionDate }} | {{ split.transactionName }} |
-              {{ split.filledAmount }} of {{ split.amount }}
-            </RouterLink>
-          </li>
-        </ul>
-      </li>
-    </ul>
+  <div class="pb-20">
+    <LargeHeader>
+      <h3 class="text-4xl font-medium">Outgoing Splits</h3>
+    </LargeHeader>
+    <section class="px-6 pt-8">
+      <SplitsTabBar />
+      <TransactionList :transactions="outSplitStore.list" type="out-split" />
+    </section>
   </div>
 
-  <RouterLink to="/in-splits">To incoming</RouterLink>
-  <br />
-  <RouterLink to="/accounts">To accounts</RouterLink>
+  <NavBar></NavBar>
 </template>

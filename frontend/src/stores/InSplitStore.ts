@@ -14,13 +14,15 @@ export const useInSplitStore = defineStore('in-split', {
   state: () => ({
     list: [] as InSplitGroup[],
     selectedId: null as string | null,
-    selected: null as InSplit | null
+    selected: null as InSplit | null,
+    isListFetched: false
   }),
   actions: {
     async fetchList() {
       try {
         const response = await httpClientWithToken.get<InSplitResponse[]>(`${IN_SPLIT_URL}`);
         this.list = mapInSplitResponsesToGroup(response.data);
+        this.isListFetched = true;
       } catch (e: any) {
         console.log('Error', e);
       }
@@ -43,5 +45,9 @@ export const useInSplitStore = defineStore('in-split', {
       }
     }
   },
-  getters: {}
+  getters: {
+    isHasPending: (state) => {
+      return state.list.some((item) => item.status === 'Pending');
+    }
+  }
 });

@@ -4,21 +4,28 @@ import { useTransactionStore } from '@/stores/TransactionStore';
 import { useSplitCreateStore } from '@/stores/SplitCreateStore';
 import { useStatusStore } from '@/stores/StatusStore';
 import { computed } from 'vue';
+import CompactHeader from '@/components/CompactHeader.vue';
+import BaseButton from '@/components/BaseButton.vue';
+import SplitPartItem from '@/components/SplitPartItem.vue';
+import TransactionHeader from '@/components/TransactionHeader.vue';
+import BaseLink from '@/components/BaseLink.vue';
+import { formatCurrency } from '@/utils/FormatCurrency';
 
 const router = useRouter();
 const transactionStore = useTransactionStore();
 const splitCreateStore = useSplitCreateStore();
 const statusStore = useStatusStore();
 
-const submitDisabled = computed(() => {
+const isSubmitDisabled = computed(() => {
   return splitCreateStore.sumWithoutMe === 0;
 });
 
-const handleChange = (userId: string) => {
+const handleChange = (amount: number, userId: string) => {
   const part = splitCreateStore.splitParts.find((p) => p.userId === userId);
-  if (part && part.amount < 0) {
-    part.amount = 0;
+  if (part) {
+    part.amount = amount < 0 ? 0 : amount;
   }
+
   splitCreateStore.markSplitPartAsTouched(userId);
   splitCreateStore.rebalanceSplitParts();
 };
@@ -28,47 +35,53 @@ const handleCreateSplit = async () => {
   statusStore.$patch({
     status: 'OK',
     action: 'Done',
-    heading: 'Requests sent',
-    message: `${splitCreateStore.partsWithoutMe.map((user) => user.firstName).join(', ')} will receive notifications`
+    heading: `Request${splitCreateStore.partsWithoutMe.length > 1 ? 's' : ''} sent`,
+    message:
+      `${splitCreateStore.partsWithoutMe.map((user) => user.firstName).join(', ')}` +
+      ` will receive notification${splitCreateStore.partsWithoutMe.length > 1 ? 's' : ''}`
   });
   await router.push(`/status`);
 };
 </script>
 <template>
-  <button @click="router.back()" type="button">Back</button>
-  <h3>Create split details</h3>
-
-  {{ transactionStore.selected.date }} | {{ transactionStore.selected.description }} |
-  {{ transactionStore.selected.amount }}
-
-  <br />
-  <br />
-
-  <RouterLink :to="`/split-create/${transactionStore.selectedId}/friend-selector`"
-    >Edit friends</RouterLink
-  >
-  <br />
-  <ul>
-    <li v-for="(part, index) in splitCreateStore.splitParts" :key="part.userId">
-      {{ part.firstName }}
-      <br />
-      {{ part.email }}
-      <input
-        v-model="part.amount"
-        @change="handleChange(part.userId)"
-        type="number"
-        :id="`${index}-number`"
-        name="${index}-number"
+  <div v-if="transactionStore.selected" class="relative">
+    <CompactHeader title="Split Details" />
+    <section class="px-6 pt-6">
+      <TransactionHeader
+        :name="transactionStore.selected.description"
+        :date="transactionStore.selected.date"
+        :amount="transactionStore.selected.amount"
       />
-    </li>
-  </ul>
+      <div class="flex items-center justify-between pb-2">
+        <h5 class="text-m font-medium">People</h5>
 
-  <button @click="handleCreateSplit" type="button" :disabled="submitDisabled">
-    Ask {{ splitCreateStore.sumWithoutMe }}
-  </button>
+        <BaseLink :to="`/split-create/${transactionStore.selectedId}/friend-selector`"
+          >Change friends</BaseLink
+        >
+      </div>
+      <ul>
+        <li v-for="part in splitCreateStore.splitParts" :key="part.userId">
+          <SplitPartItem
+            :split-part="part"
+            mode="edit"
+            v-model="part.amount"
+            @input="handleChange(part.amount, part.userId)"
+            @change="handleChange(part.amount, part.userId)"
+          />
+        </li>
+      </ul>
+    </section>
 
-  <br />
-  <br />
+    <div class="fixed w-full bottom-0 left-0 right-0 px-6 pb-12 md:max-w-5xl md:mx-auto">
+      <BaseButton class="block w-full mb-4" @click="handleCreateSplit" :disabled="isSubmitDisabled">
+        {{
+          isSubmitDisabled ? 'No receivers' : `Ask ${formatCurrency(splitCreateStore.sumWithoutMe)}`
+        }}</BaseButton
+      >
 
-  <RouterLink to="/accounts">Cancel</RouterLink>
+      <BaseButton class="block w-full" variant="danger" @click="router.push('/accounts')"
+        >Cancel</BaseButton
+      >
+    </div>
+  </div>
 </template>
