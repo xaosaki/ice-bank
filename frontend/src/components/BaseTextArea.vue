@@ -9,7 +9,7 @@ withDefaults(
   { disabled: false, label: null, placeholder: '', type: 'text', required: false }
 );
 
-const model = defineModel();
+const model = defineModel<any>();
 
 const emit = defineEmits(['change']);
 
