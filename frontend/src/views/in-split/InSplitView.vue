@@ -52,7 +52,7 @@ onBeforeUnmount(async () => {
 </script>
 
 <template>
-  <div v-if="split" class="relative">
+  <div v-if="split" class="relative pb-44">
     <CompactHeader title="Incoming Split Details" />
     <section class="px-6 pt-6">
       <div class="text-center mb-4">
@@ -87,7 +87,7 @@ onBeforeUnmount(async () => {
 
     <div
       v-if="split.answerStatus === 'Pending'"
-      class="fixed w-full bottom-0 left-0 right-0 px-6 pb-12 md:max-w-5xl md:mx-auto"
+      class="fixed w-full bottom-0 left-0 right-0 px-6 pb-12 md:max-w-5xl pt-6 bg-gradient-to-t from-background via-background via-95% to-transparent md:mx-auto"
     >
       <BaseButton class="block w-full mb-4" @click="handleProcessClick(actions[0])">
         Pay now</BaseButton

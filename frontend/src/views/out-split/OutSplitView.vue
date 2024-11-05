@@ -43,7 +43,7 @@ onBeforeUnmount(async () => {
 </script>
 
 <template>
-  <div v-if="split" class="relative">
+  <div v-if="split" class="relative pb-28">
     <CompactHeader title="Outgoing Split Details" />
     <section v-if="outSplitsStore.selected" class="px-6 pt-6">
       <div class="text-center mb-8">
@@ -78,7 +78,9 @@ onBeforeUnmount(async () => {
       </ul>
     </section>
 
-    <div class="fixed w-full bottom-0 left-0 right-0 px-6 pb-12 md:max-w-5xl md:mx-auto">
+    <div
+      class="fixed w-full bottom-0 left-0 right-0 px-6 pb-12 pt-6 bg-gradient-to-t from-background via-background via-95% to-transparent md:max-w-5xl md:mx-auto"
+    >
       <BaseButton
         class="block w-full"
         variant="danger"

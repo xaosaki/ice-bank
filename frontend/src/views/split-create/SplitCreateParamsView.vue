@@ -44,7 +44,7 @@ const handleCreateSplit = async () => {
 };
 </script>
 <template>
-  <div v-if="transactionStore.selected" class="relative">
+  <div v-if="transactionStore.selected" class="relative pb-48">
     <CompactHeader title="Split Details" />
     <section class="px-6 pt-6">
       <TransactionHeader
@@ -72,7 +72,9 @@ const handleCreateSplit = async () => {
       </ul>
     </section>
 
-    <div class="fixed w-full bottom-0 left-0 right-0 px-6 pb-12 md:max-w-5xl md:mx-auto">
+    <div
+      class="fixed w-full bottom-0 left-0 right-0 px-6 pb-12 pt-6 bg-gradient-to-t from-background via-background via-95% to-transparent md:max-w-5xl md:mx-auto"
+    >
       <BaseButton class="block w-full mb-4" @click="handleCreateSplit" :disabled="isSubmitDisabled">
         {{
           isSubmitDisabled ? 'No receivers' : `Ask ${formatCurrency(splitCreateStore.sumWithoutMe)}`
