@@ -44,6 +44,6 @@ export const useAccountStore = defineStore('accounts', {
   },
   getters: {
     selectedAccount: (state) =>
-      !!state.accounts.find((account) => account.accountId === state.selectedAccountId)
+      state.accounts.find((account) => account.accountId === state.selectedAccountId)
   }
 });

@@ -118,6 +118,7 @@
     {
       "accountId": "string",
       "balance": "number",
+      "name": "string",
       "currency": "enum(CAD, USD)"
     }
   ]

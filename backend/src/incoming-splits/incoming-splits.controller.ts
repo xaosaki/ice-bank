@@ -41,6 +41,12 @@ export class IncomingSplitsController {
     @Request() req: any
   ) {
     const userId = req.user.userId;
-    return this.splitsService.processIncomingSplit(splitId, userId, body.action, body.comment);
+    return this.splitsService.processIncomingSplit(
+      splitId,
+      userId,
+      body.action,
+      body.accountId,
+      body.comment
+    );
   }
 }

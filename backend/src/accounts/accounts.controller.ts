@@ -29,12 +29,7 @@ export class AccountsController {
   @Get()
   async getAccounts(@Request() req: any): Promise<AccountDTO[]> {
     const userId = req.user.userId;
-    const accounts = await this.accountsService.getAccountsByUserId(userId);
-    return accounts.map((account) => ({
-      accountId: account.accountId,
-      balance: account.balance,
-      currency: account.currency
-    }));
+    return await this.accountsService.getAccountsByUserId(userId);
   }
 
   @ApiOkResponse({

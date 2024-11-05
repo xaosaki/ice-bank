@@ -20,6 +20,7 @@
 | account_id  | UUID          | No       | Primary Key                    |
 | user_id     | UUID          | No       | Foreign Key to `users.user_id` |
 | balance     | DECIMAL(12,2) | No       | Default: 0                     |
+| name        | TEXT          | Yes      | Default: 'Checking account'    |
 | currency    | ENUM          | No       | ('CAD', 'USD'), Default: 'CAD' |
 
 ## Transactions Table

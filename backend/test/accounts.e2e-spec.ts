@@ -70,6 +70,7 @@ describe('AccountsEndpoints (e2e)', () => {
       expect(response.body[0]).toHaveProperty('accountId');
       expect(response.body[0]).toHaveProperty('balance');
       expect(response.body[0]).toHaveProperty('currency');
+      expect(response.body[0]).toHaveProperty('name');
     });
 
     it('should return 401 if token is missing', async () => {

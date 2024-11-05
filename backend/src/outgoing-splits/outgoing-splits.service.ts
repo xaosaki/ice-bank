@@ -34,6 +34,7 @@ export class OutgoingSplitsService {
       const split = await this.splitModel.create(
         {
           splitId: createSplitDto.splitId,
+          accountId: transactionRecord.accountId,
           transactionId: transactionRecord.transactionId,
           transactionName: transactionRecord.description,
           transactionLogo: transactionRecord.receipt,

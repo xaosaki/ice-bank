@@ -23,8 +23,9 @@ export default {
       oppositeText: '#000000',
       secondaryText: '#BBBAC1',
       disabledText: '#C7C7C7',
-      gradient: '#023869'
+      gradient: '#023869',
+      ring: '#2563eb'
     }
   },
-  plugins: [require('@tailwindcss/forms')]
+  plugins: [require('@tailwindcss/forms'), require('@headlessui/tailwindcss')]
 };

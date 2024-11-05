@@ -29,7 +29,10 @@ export class LoggingInterceptor implements NestInterceptor {
       .handle()
       .pipe(
         tap(() =>
-          this.logger.log(`${method} ${url} ${Date.now() - now}ms`, context.getClass().name)
+          this.logger.log(
+            `${method} ${url} ${Date.now() - now}ms; tracking: ${request.user?.username || 'anonymous'} ${request.headers['x-real-ip'] || request.connection.remoteAddress}`,
+            context.getClass().name
+          )
         )
       );
   }

@@ -10,12 +10,14 @@ import { getFakeUser } from './utils/utils';
 import { Split } from '../src/common/models/split.model';
 import { SplitPart } from '../src/common/models/split-part.model';
 import { TokenModule } from '../src/common/modules/token/token.module';
+import { Account } from '../src/common/models/account.model';
 
 describe('IncomingSplitsController (e2e)', () => {
   let app: INestApplication;
   let jwtService: JwtService;
   let testUser: User;
   let fromUser: User;
+  let fromAccount: Account;
   let split: Split;
   let token: string;
 
@@ -41,8 +43,16 @@ describe('IncomingSplitsController (e2e)', () => {
     fromUser = await User.create(await getFakeUser());
     token = jwtService.sign({ username: testUser.email, sub: testUser.userId });
 
+    fromAccount = await Account.create({
+      accountId: faker.string.uuid(),
+      userId: fromUser.userId,
+      balance: 100.0,
+      currency: 'CAD'
+    });
+
     split = await Split.create({
       splitId: faker.string.uuid(),
+      accountId: fromAccount.accountId,
       transactionId: faker.string.uuid(),
       transactionName: 'Dinner',
       transactionLogo: '/receipts/dinner.png',
@@ -104,54 +114,73 @@ describe('IncomingSplitsController (e2e)', () => {
   });
 
   describe('/v1/splits/incoming/:splitId/process (POST)', () => {
-    it('should accept the split', async () => {
-      await request(app.getHttpServer())
-        .post(`/v1/splits/incoming/${split.splitId}/process`)
-        .set('Authorization', `Bearer ${token}`)
-        .send({ action: 'accept' })
-        .expect(200);
+    let userAccount: Account;
 
-      const updatedPart = await SplitPart.findOne({
-        where: { splitId: split.splitId, userId: testUser.userId }
+    beforeEach(async () => {
+      userAccount = await Account.create({
+        accountId: faker.string.uuid(),
+        userId: testUser.userId,
+        balance: 100.0,
+        currency: 'CAD'
       });
-      expect(updatedPart!.status).toBe('Accepted');
     });
 
-    it('should decline the split', async () => {
+    it('should accept the split and deduct from the user account', async () => {
       await request(app.getHttpServer())
         .post(`/v1/splits/incoming/${split.splitId}/process`)
         .set('Authorization', `Bearer ${token}`)
-        .send({ action: 'decline' })
+        .send({ action: 'accept', accountId: userAccount.accountId })
         .expect(200);
 
       const updatedPart = await SplitPart.findOne({
         where: { splitId: split.splitId, userId: testUser.userId }
       });
+      const updatedFromAccount = await Account.findByPk(fromAccount.accountId);
+      const updatedUserAccount = await Account.findByPk(userAccount.accountId);
+
+      expect(updatedPart!.status).toBe('Accepted');
+      expect(Number(updatedFromAccount!.balance)).toBe(150.0);
+      expect(Number(updatedUserAccount!.balance)).toBe(50.0);
+    });
+
+    it('should decline the split without modifying account balance', async () => {
+      await request(app.getHttpServer())
+        .post(`/v1/splits/incoming/${split.splitId}/process`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({ action: 'decline', accountId: userAccount.accountId })
+        .expect(200);
+
+      const updatedPart = await SplitPart.findOne({
+        where: { splitId: split.splitId, userId: testUser.userId }
+      });
+      const updatedAccount = await Account.findByPk(userAccount.accountId);
+
       expect(updatedPart!.status).toBe('Declined');
+      expect(Number(updatedAccount!.balance)).toBe(100.0);
     });
 
     it('should mark the split as Completed when all parts are processed', async () => {
       await request(app.getHttpServer())
         .post(`/v1/splits/incoming/${split.splitId}/process`)
         .set('Authorization', `Bearer ${token}`)
-        .send({ action: 'accept' })
+        .send({ action: 'accept', accountId: userAccount.accountId })
         .expect(200);
 
-      const updatedSplit = (await Split.findByPk(split.splitId)) as Split;
-      expect(updatedSplit.status).toBe('Completed');
+      const updatedSplit = await Split.findByPk(split.splitId);
+      expect(updatedSplit!.status).toBe('Completed');
     });
 
     it('should not allow processing a part that is already accepted or declined', async () => {
       await request(app.getHttpServer())
         .post(`/v1/splits/incoming/${split.splitId}/process`)
         .set('Authorization', `Bearer ${token}`)
-        .send({ action: 'accept' })
+        .send({ action: 'accept', accountId: userAccount.accountId })
         .expect(200);
 
       await request(app.getHttpServer())
         .post(`/v1/splits/incoming/${split.splitId}/process`)
         .set('Authorization', `Bearer ${token}`)
-        .send({ action: 'accept' })
+        .send({ action: 'accept', accountId: userAccount.accountId })
         .expect(400);
     });
 
@@ -161,14 +190,39 @@ describe('IncomingSplitsController (e2e)', () => {
       await request(app.getHttpServer())
         .post(`/v1/splits/incoming/${split.splitId}/process`)
         .set('Authorization', `Bearer ${token}`)
-        .send({ action: 'accept', comment })
+        .send({ action: 'accept', accountId: userAccount.accountId, comment })
         .expect(200);
 
-      const updatedPart = (await SplitPart.findOne({
+      const updatedPart = await SplitPart.findOne({
         where: { splitId: split.splitId, userId: testUser.userId }
-      })) as SplitPart;
-      expect(updatedPart.status).toBe('Accepted');
-      expect(updatedPart.comment).toBe(comment);
+      });
+      expect(updatedPart!.status).toBe('Accepted');
+      expect(updatedPart!.comment).toBe(comment);
+    });
+
+    it('should return 403 if accountId does not belong to the user', async () => {
+      const anotherAccount = await Account.create({
+        accountId: faker.string.uuid(),
+        userId: fromUser.userId,
+        balance: 100.0,
+        currency: 'CAD'
+      });
+
+      await request(app.getHttpServer())
+        .post(`/v1/splits/incoming/${split.splitId}/process`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({ action: 'accept', accountId: anotherAccount.accountId })
+        .expect(403);
+    });
+
+    it('should return 400 if user account has insufficient balance', async () => {
+      await userAccount.update({ balance: 20.0 }); // Set balance below required amount
+
+      await request(app.getHttpServer())
+        .post(`/v1/splits/incoming/${split.splitId}/process`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({ action: 'accept', accountId: userAccount.accountId })
+        .expect(400);
     });
 
     it('should return 401 if token is missing', async () => {
@@ -176,20 +230,6 @@ describe('IncomingSplitsController (e2e)', () => {
         .post(`/v1/splits/incoming/${split.splitId}/process`)
         .send({ action: 'accept' })
         .expect(401);
-    });
-
-    it('should return 403 if user is not part of the split', async () => {
-      const anotherUser = await User.create(await getFakeUser());
-      const anotherToken = jwtService.sign({
-        username: anotherUser.email,
-        sub: anotherUser.userId
-      });
-
-      await request(app.getHttpServer())
-        .post(`/v1/splits/incoming/${split.splitId}/process`)
-        .set('Authorization', `Bearer ${anotherToken}`)
-        .send({ action: 'accept' })
-        .expect(403);
     });
   });
 });

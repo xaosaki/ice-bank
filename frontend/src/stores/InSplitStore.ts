@@ -42,6 +42,7 @@ export const useInSplitStore = defineStore('in-split', {
         await httpClientWithToken.post(`${IN_SPLIT_URL}/${this.selectedId}/process`, processParams);
       } catch (e: any) {
         console.log('Error', e);
+        throw e;
       }
     }
   },

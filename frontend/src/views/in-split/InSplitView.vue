@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStatusStore } from '@/stores/StatusStore';
 import { useInSplitStore } from '@/stores/InSplitStore';
@@ -8,10 +8,13 @@ import TransactionHeader from '@/components/TransactionHeader.vue';
 import CompactHeader from '@/components/CompactHeader.vue';
 import BaseButton from '@/components/BaseButton.vue';
 import BaseTextArea from '@/components/BaseTextArea.vue';
-import { formatCurrency } from '../../utils/FormatCurrency';
+import { formatCurrency } from '@/utils/FormatCurrency';
+import BaseSelect, { type BaseSelectOption } from '@/components/BaseSelect.vue';
+import { useAccountStore } from '@/stores/AccountStore';
 
 const inSplitStore = useInSplitStore();
 const statusStore = useStatusStore();
+const accountStore = useAccountStore();
 const route = useRoute();
 const router = useRouter();
 
@@ -19,21 +22,50 @@ const split = computed(() => inSplitStore.selected);
 
 const actions = ['accept', 'decline'] as InSplitProcessParams['action'][];
 
+const selectedAccount = ref<BaseSelectOption>();
+
+const accountOptions = computed<BaseSelectOption[]>(() => {
+  return accountStore.accounts.map((account) => ({
+    value: account.accountId,
+    label: `${account.name}: ${formatCurrency(account.balance)}`
+  }));
+});
+
+watchEffect(() => {
+  if (accountOptions.value.length > 0 && !selectedAccount.value) {
+    selectedAccount.value = accountOptions.value[0];
+  }
+});
+
 const handleProcessClick = async (action: InSplitProcessParams['action']) => {
-  await inSplitStore.processSelected({
-    action,
-    comment: inSplitStore.selected?.comment || null
-  });
-  statusStore.$patch({
-    status: 'OK',
-    action: action === 'accept' ? 'Done' : 'Cancel',
-    heading:
-      action === 'accept'
-        ? `${formatCurrency(split.value?.amountForPay || 0)} was sent`
-        : 'Split declined',
-    message: `${split.value?.fromUser?.firstName} will be notified`,
-    next: '/in-splits'
-  });
+  try {
+    await inSplitStore.processSelected({
+      action,
+      accountId: selectedAccount.value!.value,
+      comment: inSplitStore.selected?.comment || null
+    });
+
+    statusStore.$patch({
+      status: 'OK',
+      action: action === 'accept' ? 'Done' : 'Cancel',
+      heading:
+        action === 'accept'
+          ? `${formatCurrency(split.value?.amountForPay || 0)} was sent`
+          : 'Split declined',
+      message: `${split.value?.fromUser?.firstName} will be notified`,
+      next: '/in-splits'
+    });
+    await accountStore.fetchAccounts();
+  } catch (e: any) {
+    statusStore.$patch({
+      status: 'Error',
+      action: 'Cancel',
+      heading: 'Error',
+      message: `${e.response?.data?.message || 'something wrong'}`,
+      next: '/in-splits'
+    });
+  }
+
   await router.push(`/status`);
 };
 
@@ -73,6 +105,9 @@ onBeforeUnmount(async () => {
         :amount="split.amountForPay"
         :show-amount="false"
       />
+
+      <h5 class="text-m font-semibold pb-3">Account</h5>
+      <BaseSelect v-model="selectedAccount" :options="accountOptions" class="mb-4"></BaseSelect>
 
       <h5 class="text-m font-semibold pb-3">Comment</h5>
       <BaseTextArea

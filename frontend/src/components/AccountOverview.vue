@@ -32,7 +32,7 @@ const handleChangeAccountClick = (id: Account['accountId']) => {
         @click="handleChangeAccountClick(previousAccount.accountId)"
         class="px-2 py-1 bg-primary w-full text-white rounded-tr-lg"
       >
-        {{ previousAccount.accountId.slice(-4) }}
+        {{ previousAccount.name }}
       </button>
       <div v-else class="w-full"></div>
     </div>
@@ -41,7 +41,7 @@ const handleChangeAccountClick = (id: Account['accountId']) => {
       v-if="currentAccount"
       class="pt-2 pb-4 px-4 bg-primary text-primaryText rounded-t-lg font-semibold"
     >
-      {{ currentAccount.accountId.slice(-4) }}
+      {{ currentAccount.name }}
     </div>
 
     <div class="flex items-end">
@@ -50,7 +50,7 @@ const handleChangeAccountClick = (id: Account['accountId']) => {
         @click="handleChangeAccountClick(nextAccount.accountId)"
         class="px-2 py-1 bg-primary w-full text-black rounded-tl-lg"
       >
-        {{ nextAccount.accountId.slice(-4) }}
+        {{ nextAccount.name }}
       </button>
       <div v-else class="w-full"></div>
     </div>

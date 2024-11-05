@@ -2,6 +2,7 @@ import { Column, DataType, ForeignKey, HasMany, Model, Table } from 'sequelize-t
 import { User } from './user.model';
 import { Transaction } from './transaction.model';
 import { SplitPart } from './split-part.model';
+import { Account } from './account.model';
 
 @Table({
   tableName: 'splits',
@@ -15,6 +16,13 @@ export class Split extends Model {
     unique: true
   })
   splitId: string;
+
+  @ForeignKey(() => Account)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false
+  })
+  accountId: string;
 
   @ForeignKey(() => Transaction)
   @Column({

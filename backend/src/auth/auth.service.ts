@@ -55,15 +55,23 @@ export class AuthService {
         .then((model) => model.toDTO());
 
       // TODO: Don't forget to remove in real world
-      await this.accountModel.create(
-        {
-          accountId: crypto.randomUUID(),
-          userId: user.userId,
-          balance: 1000,
-          currency: 'CAD'
-        },
-        { transaction }
-      );
+      const accounts = [
+        ['Daily account', 1000],
+        ['Checking account', 500],
+        ['Another account', 750]
+      ];
+      for (const account of accounts) {
+        await this.accountModel.create(
+          {
+            accountId: crypto.randomUUID(),
+            name: account[0],
+            userId: user.userId,
+            balance: account[1],
+            currency: 'CAD'
+          },
+          { transaction }
+        );
+      }
 
       await transaction.commit();
 

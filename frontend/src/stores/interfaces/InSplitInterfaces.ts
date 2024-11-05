@@ -33,5 +33,6 @@ export interface InSplitUserDetails {
 
 export interface InSplitProcessParams {
   action: 'accept' | 'decline';
+  accountId: string;
   comment: string | null;
 }

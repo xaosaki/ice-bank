@@ -9,13 +9,17 @@ import { User } from '../common/models/user.model';
 import { IncomingSplitDTO } from './dto/incoming-split.dto';
 import { Split } from '../common/models/split.model';
 import { SplitPart } from '../common/models/split-part.model';
+import { Account } from '../common/models/account.model';
+import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
 export class IncomingSplitsService {
   constructor(
     @InjectModel(Split) private readonly splitModel: typeof Split,
     @InjectModel(SplitPart) private readonly splitPartModel: typeof SplitPart,
-    @InjectModel(User) private readonly userModel: typeof User
+    @InjectModel(User) private readonly userModel: typeof User,
+    @InjectModel(Account) private readonly accountModel: typeof Account,
+    private readonly sequelize: Sequelize
   ) {}
 
   async getIncomingSplits(userId: string) {
@@ -50,31 +54,94 @@ export class IncomingSplitsService {
     splitId: string,
     userId: string,
     action: 'accept' | 'decline',
+    accountId: string,
     comment?: string
   ) {
-    const part = await this.splitPartModel.findOne({
-      where: { splitId, userId }
-    });
+    const transaction = await this.sequelize.transaction();
 
-    if (!part) {
-      throw new ForbiddenException('User not authorized to process this split');
+    try {
+      const part = await this.splitPartModel.findOne({
+        where: { splitId, userId },
+        transaction
+      });
+
+      if (!part) {
+        throw new ForbiddenException('User not authorized to process this split');
+      }
+
+      if (part.status !== 'Pending') {
+        throw new BadRequestException('Split part is already processed');
+      }
+
+      // Payment simulation
+      if (action === 'accept') {
+        const account = await this.accountModel.findOne({
+          where: { accountId, userId },
+          transaction,
+          lock: transaction.LOCK.UPDATE
+        });
+
+        if (!account) {
+          throw new ForbiddenException('Account not authorized for this user');
+        }
+
+        const split = await this.splitModel.findOne({
+          where: { splitId },
+          transaction
+        });
+
+        if (!split) {
+          throw new BadRequestException('Split not found');
+        }
+
+        const transactionAmount = Number(part.amount);
+        if (Number(account.balance) < transactionAmount) {
+          throw new BadRequestException('Insufficient balance');
+        }
+
+        await account.update(
+          { balance: Number(account.balance) - transactionAmount },
+          { transaction }
+        );
+
+        const targetAccount = await this.accountModel.findOne({
+          where: { accountId: split.accountId },
+          transaction,
+          lock: transaction.LOCK.UPDATE
+        });
+
+        if (!targetAccount) {
+          throw new BadRequestException('Target account not found');
+        }
+
+        await targetAccount.update(
+          { balance: Number(targetAccount.balance) + transactionAmount },
+          { transaction }
+        );
+      }
+
+      await part.update(
+        {
+          status: action === 'accept' ? 'Accepted' : 'Declined',
+          comment
+        },
+        { transaction }
+      );
+
+      const pendingParts = await this.splitPartModel.count({
+        where: { splitId, status: 'Pending' },
+        transaction
+      });
+
+      if (pendingParts === 0) {
+        await this.splitModel.update({ status: 'Completed' }, { where: { splitId }, transaction });
+      }
+
+      await transaction.commit();
+      return { message: 'Split processed successfully' };
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
     }
-
-    if (part.status !== 'Pending') {
-      throw new BadRequestException('Split part is already processed');
-    }
-
-    await part.update({ status: action === 'accept' ? 'Accepted' : 'Declined', comment });
-
-    const pendingParts = await this.splitPartModel.count({
-      where: { splitId, status: 'Pending' }
-    });
-
-    // TODO: Replace with a push event that is processed reliably (in the real world)
-    if (pendingParts === 0) {
-      await this.splitModel.update({ status: 'Completed' }, { where: { splitId } });
-    }
-
-    return { message: 'Split processed successfully' };
   }
 }

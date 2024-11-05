@@ -29,6 +29,13 @@ export class Account extends Model {
   balance: number;
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    defaultValue: 'Checking account'
+  })
+  name: string;
+
+  @Column({
     type: DataType.ENUM('CAD', 'USD'),
     allowNull: false,
     defaultValue: 'CAD'

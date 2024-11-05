@@ -137,6 +137,7 @@ describe('OutgoingSplitsController (e2e)', () => {
     beforeEach(async () => {
       split = await Split.create({
         splitId: faker.string.uuid(),
+        accountId: transaction.accountId,
         transactionId: transaction.transactionId,
         amount: 100.0,
         fromUserId: testUser.userId,
@@ -190,6 +191,7 @@ describe('OutgoingSplitsController (e2e)', () => {
     beforeEach(async () => {
       await Split.create({
         splitId: faker.string.uuid(),
+        accountId: transaction.accountId,
         transactionId: transaction.transactionId,
         amount: 100.0,
         fromUserId: testUser.userId,
@@ -201,6 +203,7 @@ describe('OutgoingSplitsController (e2e)', () => {
 
       await Split.create({
         splitId: faker.string.uuid(),
+        accountId: transaction2.accountId,
         transactionId: transaction2.transactionId,
         amount: 200.0,
         fromUserId: testUser.userId,
@@ -249,6 +252,7 @@ describe('OutgoingSplitsController (e2e)', () => {
     beforeEach(async () => {
       split = await Split.create({
         splitId: faker.string.uuid(),
+        accountId: transaction.accountId,
         transactionId: transaction.transactionId,
         amount: 100.0,
         fromUserId: testUser.userId,
