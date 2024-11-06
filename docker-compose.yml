@@ -16,6 +16,10 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRE_TIME: ${JWT_EXPIRE_TIME}
       TEST_DB_PORT: ${TEST_DB_PORT}
+      S3_KEY: ${S3_KEY}
+      S3_SECRET: ${S3_SECRET}
+      S3_BUCKET: ${S3_BUCKET}
+      S3_HOST: ${S3_HOST}
       UI_HOST: http://localhost:8088
     ports:
       - ${BACK_EXTERNAL_PORT}:${BACK_INTERNAL_PORT}
@@ -44,6 +48,18 @@ services:
       - ${DB_EXTERNAL_PORT}:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  minio:
+    image: minio/minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_USERNAME}
+      MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server --console-address ":9001" /data
+    volumes:
+      - ./local-minio-data:/data
 
   db-test:
     image: postgres:16

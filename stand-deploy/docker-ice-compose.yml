@@ -13,6 +13,10 @@ services:
       JWT_SECRET: ${ICE_JWT_SECRET}
       JWT_EXPIRE_TIME: ${ICE_JWT_EXPIRE_TIME}
       UI_HOST: https://ice.xaosaki.pro
+      S3_KEY: ${S3_KEY}
+      S3_SECRET: ${S3_SECRET}
+      S3_BUCKET: ${S3_BUCKET}
+      S3_HOST: ${S3_HOST}
     restart: unless-stopped
     networks:
       - xaosakipro_default

@@ -37,10 +37,10 @@ export class OutgoingSplitsService {
           accountId: transactionRecord.accountId,
           transactionId: transactionRecord.transactionId,
           transactionName: transactionRecord.description,
-          transactionLogo: transactionRecord.receipt,
+          transactionLogo: '',
           transactionDate: transactionRecord.date,
           amount: createSplitDto.amount,
-          receipt: createSplitDto.receipt,
+          receipt: transactionRecord.receipt,
           fromUserId: userId,
           status: 'Pending'
         },

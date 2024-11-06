@@ -7,9 +7,6 @@ export class CreateSplitDTO {
   @ApiProperty({ example: '00000000-0000-4000-8000-000000000002' })
   transactionId: string;
 
-  @ApiProperty({ example: '/receipts/1234.png' })
-  receipt: string | null;
-
   @ApiProperty({ example: 100.0 })
   amount: number;
 

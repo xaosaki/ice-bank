@@ -10,6 +10,8 @@ import SplitPartItem from '@/components/SplitPartItem.vue';
 import TransactionHeader from '@/components/TransactionHeader.vue';
 import BaseLink from '@/components/BaseLink.vue';
 import { formatCurrency } from '@/utils/FormatCurrency';
+import FileUpload from '@/components/FileUpload.vue';
+import BaseImage from '@/components/BaseImage.vue';
 
 const router = useRouter();
 const transactionStore = useTransactionStore();
@@ -51,6 +53,20 @@ const handleCreateSplit = async () => {
         :name="transactionStore.selected.description"
         :date="transactionStore.selected.date"
         :amount="transactionStore.selected.amount"
+      />
+      <h5 class="text-m font-semibold pb-3">Receipt</h5>
+      <FileUpload
+        v-if="!transactionStore.selected.receipt"
+        @change="transactionStore.uploadReceipt"
+        class="mb-4"
+      />
+      <BaseImage
+        v-if="transactionStore.selectedReceipt"
+        :url="transactionStore.selectedReceipt"
+        alt="Receipt"
+        :has-remove="true"
+        class="mb-4"
+        @remove-clicked="transactionStore.deleteReceipt"
       />
       <div class="flex items-center justify-between pb-2">
         <h5 class="text-m font-medium">People</h5>

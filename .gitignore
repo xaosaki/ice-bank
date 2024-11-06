@@ -7,5 +7,6 @@
 .settings/
 *.sublime-workspace
 
+/local-minio-data
 /frontend/src_draft
 .env

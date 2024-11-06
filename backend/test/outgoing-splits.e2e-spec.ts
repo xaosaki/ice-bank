@@ -102,7 +102,6 @@ describe('OutgoingSplitsController (e2e)', () => {
         .send({
           splitId,
           transactionId: transaction.transactionId,
-          receipt: 'some-receipt.png',
           amount: 100.0,
           users: [{ userId: recipientUser.userId, amount: 100.0 }]
         })
@@ -123,7 +122,6 @@ describe('OutgoingSplitsController (e2e)', () => {
         .send({
           splitId: faker.string.uuid(),
           transactionId: transaction.transactionId,
-          receipt: 'some-receipt.png',
           amount: 100.0,
           users: [{ userId: recipientUser.userId, amount: 100.0 }]
         })

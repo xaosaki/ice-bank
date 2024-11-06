@@ -9,6 +9,8 @@ import LargeHeader from '@/components/LargeHeader.vue';
 import TransactionHeader from '@/components/TransactionHeader.vue';
 import BaseTextArea from '@/components/BaseTextArea.vue';
 import OutSplitCompactItem from '@/components/OutSplitCompactItem.vue';
+import FileUpload from '@/components/FileUpload.vue';
+import BaseImage from '@/components/BaseImage.vue';
 
 const transactionStore = useTransactionStore();
 const route = useRoute();
@@ -58,6 +60,16 @@ onBeforeUnmount(async () => {
       :text="transaction.category"
       sub-text="Change Category"
       :disabled="true"
+    />
+    <h5 class="text-m font-semibold pb-3">Receipt</h5>
+    <FileUpload v-if="!transaction.receipt" @change="transactionStore.uploadReceipt" class="mb-4" />
+    <BaseImage
+      v-if="transactionStore.selectedReceipt"
+      :url="transactionStore.selectedReceipt"
+      alt="Receipt"
+      :has-remove="true"
+      class="mb-4"
+      @remove-clicked="transactionStore.deleteReceipt"
     />
     <h5 class="text-m font-semibold pb-3">Splits</h5>
     <ul>

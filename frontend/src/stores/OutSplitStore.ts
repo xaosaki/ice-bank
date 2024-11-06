@@ -9,10 +9,12 @@ import { mapOutSplitResponsesToGroup } from '@/stores/mappers/out-split/OutSplit
 import { mapOutSplit } from '@/stores/mappers/out-split/OutSplitMapper';
 
 const OUT_SPLIT_URL = '/api/v1/splits/outgoing';
+const TRANSACTION_URL = '/api/v1/transactions';
 
 export const useOutSplitStore = defineStore('out-split', {
   state: () => ({
     list: [] as OutSplitGroup[],
+    selectedReceipt: null as string | null,
     selectedId: null as string | null,
     selected: null as OutSplit | null
   }),
@@ -31,6 +33,9 @@ export const useOutSplitStore = defineStore('out-split', {
           `${OUT_SPLIT_URL}/${this.selectedId}`
         );
         this.selected = mapOutSplit(response.data);
+        if (this.selected.receipt) {
+          await this.getReceipt();
+        }
       } catch (e: any) {
         console.log('Error', e);
       }
@@ -41,6 +46,22 @@ export const useOutSplitStore = defineStore('out-split', {
       } catch (e: any) {
         console.log('Error', e);
       }
+    },
+    async getReceipt() {
+      const response = await httpClientWithToken.get(
+        `${TRANSACTION_URL}/${this.selected?.transactionId}/receipt`,
+        {
+          responseType: 'arraybuffer'
+        }
+      );
+
+      const blob = new Blob([response.data], { type: response.headers['content-type'] });
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        this.selectedReceipt = reader.result as string;
+      };
+      reader.readAsDataURL(blob);
     }
   },
   getters: {}

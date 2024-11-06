@@ -11,6 +11,7 @@ import { Split } from '../common/models/split.model';
 import { SplitPart } from '../common/models/split-part.model';
 import { Account } from '../common/models/account.model';
 import { Sequelize } from 'sequelize-typescript';
+import { S3Service } from '../common/services/s3.service';
 
 @Injectable()
 export class IncomingSplitsService {
@@ -19,7 +20,8 @@ export class IncomingSplitsService {
     @InjectModel(SplitPart) private readonly splitPartModel: typeof SplitPart,
     @InjectModel(User) private readonly userModel: typeof User,
     @InjectModel(Account) private readonly accountModel: typeof Account,
-    private readonly sequelize: Sequelize
+    private readonly sequelize: Sequelize,
+    private readonly s3Service: S3Service
   ) {}
 
   async getIncomingSplits(userId: string) {
@@ -36,7 +38,7 @@ export class IncomingSplitsService {
     );
   }
 
-  async getIncomingSplitById(splitId: string, userId: string) {
+  async getIncomingSplitById(splitId: string, userId: string, raw = false) {
     const part = (await this.splitPartModel.findOne({
       where: { splitId, userId },
       include: [Split]
@@ -47,7 +49,7 @@ export class IncomingSplitsService {
     }
 
     const fromUser = (await this.userModel.findByPk(part.split.fromUserId)) as User;
-    return new IncomingSplitDTO(part.split, part, fromUser);
+    return raw ? part.split : new IncomingSplitDTO(part.split, part, fromUser);
   }
 
   async processIncomingSplit(
@@ -143,5 +145,12 @@ export class IncomingSplitsService {
       await transaction.rollback();
       throw error;
     }
+  }
+
+  async getReceipt(splitId: string, userId: string): Promise<any> {
+    const split = (await this.getIncomingSplitById(splitId, userId, true)) as Split | null;
+    if (!split || !split.receipt) throw new NotFoundException('Receipt not found');
+
+    return this.s3Service.getFileStream(split.receipt);
   }
 }

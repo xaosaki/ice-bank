@@ -30,10 +30,6 @@ export const useUserStore = defineStore('user', {
         const response = await httpClient.post<LoginResponse>(`${AUTH_URL}/login`, params);
         this.token = response.data.accessToken;
         localStorage.setItem('token', response.data.accessToken);
-        await this.fetchProfile();
-
-        const inSplitStore = useInSplitStore();
-        await inSplitStore.fetchList();
         await router.push(`/accounts`);
       } catch (e: any) {
         console.log('Error during login', e);

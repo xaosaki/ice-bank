@@ -36,9 +36,7 @@ watch(
   }
 );
 
-onMounted(async () => {
-  await accountsStore.fetchAccounts();
-
+const checkAccountsAndUrl = async () => {
   const accountIdFromUrl = route.params.accountId as string | undefined;
 
   if (
@@ -46,8 +44,14 @@ onMounted(async () => {
     accountsStore.accounts.some((account) => account.accountId === accountIdFromUrl)
   ) {
     accountsStore.selectAccount(accountIdFromUrl);
+  } else if (accountIdFromUrl === '' && accountsStore.accounts.length) {
+    accountsStore.selectAccount(accountsStore.accounts[0].accountId);
   }
-});
+};
+
+watch(() => accountsStore.accounts, checkAccountsAndUrl);
+
+onMounted(checkAccountsAndUrl);
 
 onBeforeUnmount(async () => {
   accountsStore.selectAccount(null);

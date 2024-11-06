@@ -11,6 +11,7 @@ import BaseTextArea from '@/components/BaseTextArea.vue';
 import { formatCurrency } from '@/utils/FormatCurrency';
 import BaseSelect, { type BaseSelectOption } from '@/components/BaseSelect.vue';
 import { useAccountStore } from '@/stores/AccountStore';
+import BaseImage from '@/components/BaseImage.vue';
 
 const inSplitStore = useInSplitStore();
 const statusStore = useStatusStore();
@@ -105,6 +106,10 @@ onBeforeUnmount(async () => {
         :amount="split.amountForPay"
         :show-amount="false"
       />
+      <template v-if="inSplitStore.selectedReceipt">
+        <h5 class="text-m font-semibold pb-3">Receipt</h5>
+        <BaseImage :url="inSplitStore.selectedReceipt" alt="Receipt" class="mb-4" />
+      </template>
 
       <h5 class="text-m font-semibold pb-3">Account</h5>
       <BaseSelect v-model="selectedAccount" :options="accountOptions" class="mb-4"></BaseSelect>

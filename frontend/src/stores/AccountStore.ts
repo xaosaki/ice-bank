@@ -20,7 +20,6 @@ export const useAccountStore = defineStore('accounts', {
       try {
         const response = await httpClientWithToken.get<Account[]>(`${ACCOUNT_URL}`);
         this.accounts = response.data;
-        this.selectedAccountId = response.data[0]?.accountId || null;
       } catch (e: any) {
         console.log('Error', e);
       }

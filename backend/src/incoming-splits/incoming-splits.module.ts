@@ -9,10 +9,11 @@ import { JwtStrategy } from '../common/strategies/jwt.strategy';
 import { Account } from '../common/models/account.model';
 import { Transaction } from '../common/models/transaction.model';
 import { Merchant } from '../common/models/merchant.model';
+import { S3Service } from '../common/services/s3.service';
 
 @Module({
   imports: [SequelizeModule.forFeature([Split, SplitPart, User, Account, Transaction, Merchant])],
   controllers: [IncomingSplitsController],
-  providers: [JwtStrategy, IncomingSplitsService]
+  providers: [JwtStrategy, IncomingSplitsService, S3Service]
 })
 export class IncomingSplitsModule {}

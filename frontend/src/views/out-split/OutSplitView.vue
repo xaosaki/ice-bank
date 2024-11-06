@@ -8,6 +8,7 @@ import CompactHeader from '@/components/CompactHeader.vue';
 import BaseButton from '@/components/BaseButton.vue';
 import SplitPartItem from '@/components/SplitPartItem.vue';
 import BaseLink from '@/components/BaseLink.vue';
+import BaseImage from '@/components/BaseImage.vue';
 
 const outSplitsStore = useOutSplitStore();
 const statusStore = useStatusStore();
@@ -62,6 +63,10 @@ onBeforeUnmount(async () => {
         text="Transaction details"
         :to="`/transactions/${outSplitsStore.selected.transactionId}`"
       />
+      <template v-if="outSplitsStore.selectedReceipt">
+        <h5 class="text-m font-semibold pb-3">Receipt</h5>
+        <BaseImage :url="outSplitsStore.selectedReceipt" alt="Receipt" class="mb-4" />
+      </template>
       <ul>
         <li v-for="(group, id) of split.usersGrouped" :key="id" class="mb-6">
           <div
