@@ -18,14 +18,25 @@ const router = useRouter();
 const split = computed(() => outSplitsStore.selected);
 
 const handleCancelClick = async () => {
-  await outSplitsStore.cancelSelected();
-  statusStore.$patch({
-    status: 'OK',
-    action: 'Cancel',
-    heading: 'Split canceled',
-    message: ``,
-    next: '/out-splits'
-  });
+  try {
+    await outSplitsStore.cancelSelected();
+    statusStore.$patch({
+      status: 'OK',
+      action: 'Cancel',
+      heading: 'Split canceled',
+      message: ``,
+      next: '/out-splits'
+    });
+  } catch (e: any) {
+    statusStore.$patch({
+      status: 'Error',
+      action: 'Cancel',
+      heading: 'Error',
+      message: `${e.response?.data?.message || 'An error has occurred. Try again later.'}`,
+      next: `/out-splits`
+    });
+  }
+
   await router.push(`/status`);
 };
 

@@ -33,16 +33,26 @@ const handleChange = (amount: number, userId: string) => {
 };
 
 const handleCreateSplit = async () => {
-  await splitCreateStore.createSplit(transactionStore.selectedId!);
-  statusStore.$patch({
-    status: 'OK',
-    action: 'Done',
-    heading: `Request${splitCreateStore.partsWithoutMe.length > 1 ? 's' : ''} sent`,
-    next: `/accounts/${transactionStore.selected.accountId!}`,
-    message:
-      `${splitCreateStore.partsWithoutMe.map((user) => user.firstName).join(', ')}` +
-      ` will receive notification${splitCreateStore.partsWithoutMe.length > 1 ? 's' : ''}`
-  });
+  try {
+    await splitCreateStore.createSplit(transactionStore.selectedId!);
+    statusStore.$patch({
+      status: 'OK',
+      action: 'Done',
+      heading: `Request${splitCreateStore.partsWithoutMe.length > 1 ? 's' : ''} sent`,
+      next: `/accounts/${transactionStore.selected.accountId!}`,
+      message:
+        `${splitCreateStore.partsWithoutMe.map((user) => user.firstName).join(', ')}` +
+        ` will receive notification${splitCreateStore.partsWithoutMe.length > 1 ? 's' : ''}`
+    });
+  } catch (e: any) {
+    statusStore.$patch({
+      status: 'Error',
+      action: 'Cancel',
+      heading: 'Error',
+      message: `${e.response?.data?.message || 'An error has occurred. Try again later.'}`,
+      next: `/accounts/${transactionStore.selected.accountId!}`
+    });
+  }
   await router.push(`/status`);
 };
 </script>

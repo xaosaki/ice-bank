@@ -62,7 +62,7 @@ const handleProcessClick = async (action: InSplitProcessParams['action']) => {
       status: 'Error',
       action: 'Cancel',
       heading: 'Error',
-      message: `${e.response?.data?.message || 'something wrong'}`,
+      message: `${e.response?.data?.message || 'An error has occurred. Try again later.'}`,
       next: '/in-splits'
     });
   }
