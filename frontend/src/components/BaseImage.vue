@@ -31,7 +31,7 @@ const closeModal = () => {
 
 <template>
   <div class="relative w-16 h-16 flex justify-center items-center border-primary border-2 rounded">
-    <img :src="url" class="object-contain w-14 h-14" :alt="alt" @click="openModal" />
+    <img :src="url" class="object-contain w-14 h-14 cursor-pointer" :alt="alt" @click="openModal" />
     <button v-if="hasRemove" class="absolute remove-button" @click="handleRemoveClick">
       <font-awesome-icon
         :icon="faCircleXmark"

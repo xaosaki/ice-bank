@@ -25,7 +25,7 @@ withDefaults(
       <div class="relative mt-1">
         <ListboxButton
           v-slot="{ open }"
-          class="relative w-full bg-surface cursor-default rounded-lg bg-white px-4 py-4 pr-10 text-left shadow-md focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-opacity-75"
+          class="relative w-full bg-surface rounded-lg bg-white px-4 py-4 pr-10 text-left shadow-md cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-opacity-75"
         >
           <span class="block truncate">{{ model?.label || 'Select one' }}</span>
           <span class="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer">

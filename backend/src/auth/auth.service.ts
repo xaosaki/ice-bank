@@ -56,9 +56,9 @@ export class AuthService {
 
       // TODO: Don't forget to remove in real world
       const accounts = [
-        ['Daily account', 1000],
-        ['Checking account', 500],
-        ['Another account', 750]
+        ['Daily', 1000],
+        ['Checking', 500],
+        ['Another', 750]
       ];
       for (const account of accounts) {
         await this.accountModel.create(

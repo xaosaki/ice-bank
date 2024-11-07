@@ -13,6 +13,13 @@
 | avatar          | TEXT      | Yes      |                            |
 | phone           | VARCHAR   | Yes      | Unique                     |
 
+## BlackList_Tokens Table
+
+| Column Name | Type      | Nullable | Attributes  |
+|-------------|-----------|----------|-------------|
+| token       | TEXT      | No       | Primary Key |
+| expires_at  | TIMESTAMP | No       |             |
+
 ## Accounts Table
 
 | Column Name | Type          | Nullable | Attributes                     |
