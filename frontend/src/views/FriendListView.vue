@@ -13,7 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 const userStore = useUserStore();
 const friendStore = useFriendStore();
 
-const userId = ref('');
+const userIdOrEmail = ref('');
 
 const handleCopyIDClick = async () => {
   await navigator.clipboard.writeText(userStore.user.userId);
@@ -24,9 +24,9 @@ const handleRemoveClick = async (id: string) => {
   await friendStore.fetchFriends();
 };
 const handleAddClick = async () => {
-  await friendStore.add(userId.value);
+  await friendStore.add(userIdOrEmail.value);
   await friendStore.fetchFriends();
-  userId.value = '';
+  userIdOrEmail.value = '';
 };
 
 onMounted(async () => {
@@ -53,12 +53,12 @@ onBeforeUnmount(async () => {
       <div class="flex items-end mb-4">
         <BaseInput
           class="w-3/4 mr-4 flex friend-input"
-          v-model="userId"
+          v-model="userIdOrEmail"
           placeholder="Friend ID"
           name="friendID"
           @keyup.enter="handleAddClick"
         />
-        <BaseButton class="w-1/4 py-3.5" :disabled="!userId" @click.prevent="handleAddClick"
+        <BaseButton class="w-1/4 py-3.5" :disabled="!userIdOrEmail" @click.prevent="handleAddClick"
           >Add</BaseButton
         >
       </div>
@@ -66,7 +66,6 @@ onBeforeUnmount(async () => {
       <h5 class="text-m font-semibold mb-4">Friend list:</h5>
       <ul>
         <li v-for="friend of friendStore.list" :key="friend.userId">
-          <div class="text-sm text-secondaryText">id: {{ friend.userId }}</div>
           <FriendActionItem
             class="mb-4"
             action-type="remove"

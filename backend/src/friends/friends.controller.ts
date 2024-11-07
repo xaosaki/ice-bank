@@ -21,10 +21,10 @@ export class FriendsController {
     return this.friendsService.getFriends(userId);
   }
 
-  @Post(':userId')
-  async addFriend(@Param('userId') friendUserId: string, @Request() req: any) {
+  @Post(':userIdOrEmail')
+  async addFriend(@Param('userIdOrEmail') userIdOrEmail: string, @Request() req: any) {
     const userId = req.user.userId;
-    return this.friendsService.addFriend(userId, friendUserId);
+    return this.friendsService.addFriend(userId, userIdOrEmail);
   }
 
   @Delete(':userId')

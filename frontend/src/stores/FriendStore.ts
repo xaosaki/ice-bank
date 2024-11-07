@@ -17,9 +17,9 @@ export const useFriendStore = defineStore('friend', {
         console.log('Error', e);
       }
     },
-    async add(userId: string) {
+    async add(userIdOrEmail: string) {
       try {
-        await httpClientWithToken.post(`${FRIEND_URL}/${userId}`);
+        await httpClientWithToken.post(`${FRIEND_URL}/${userIdOrEmail}`);
       } catch (e: any) {
         console.log('Error', e);
       }

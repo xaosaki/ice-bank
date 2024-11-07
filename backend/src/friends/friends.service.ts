@@ -26,14 +26,23 @@ export class FriendsService {
     return friends.map((friend) => new FriendDTO(friend.friend));
   }
 
-  async addFriend(userId: string, friendUserId: string) {
-    const friendExists = await this.userModel.findByPk(friendUserId);
+  async addFriend(userId: string, friendIdOrEmail: string) {
+    const isUuid = (value: string) =>
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(value);
+
+    const whereCondition = isUuid(friendIdOrEmail)
+      ? { userId: friendIdOrEmail }
+      : { email: friendIdOrEmail };
+
+    const friendExists = await this.userModel.findOne({
+      where: whereCondition
+    });
 
     if (!friendExists) {
       throw new NotFoundException('Friend not found');
     }
 
-    await this.friendModel.create({ userId, friendUserId });
+    await this.friendModel.create({ userId, friendUserId: friendExists.userId });
     return { message: 'Friend added successfully' };
   }
 
