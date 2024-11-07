@@ -30,16 +30,28 @@ services:
       - "traefik.http.routers.ice-api.rule=Host(`ice-api.xaosaki.pro`)"
       - "traefik.http.routers.ice-api.entrypoints=websecure"
       - "traefik.http.routers.ice-api.tls=true"
+      - "traefik.http.routers.ice-api.service=ice-api"
       - "traefik.http.routers.ice-api.tls.certresolver=prod"
       - "traefik.http.services.ice-api.loadbalancer.server.port=3000"
+      # Socket
+      - "traefik.http.routers.ice-socket.rule=Host(`ice-socket.xaosaki.pro`)"
+      - "traefik.http.routers.ice-socket.entrypoints=websecure"
+      - "traefik.http.routers.ice-socket.tls=true"
+      - "traefik.http.routers.ice-socket.service=ice-socket"
+      - "traefik.http.routers.ice-socket.tls.certresolver=prod"
+      - "traefik.http.services.ice-socket.loadbalancer.server.port=3001"
 
   ice-bank-frontend:
     image: ghcr.io/xaosaki/ice-bank-frontend:latest
     container_name: ice_bank_frontend
     environment:
       API_BASE_URL: https://ice-api.xaosaki.pro
+      API_SOCKET_URL: https://ice-socket.xaosaki.pro
     command: >
-      sh -c 'sed -i "s|PLACEHOLDER_API_BASE_URL|$$API_BASE_URL|g" /usr/share/nginx/html/index.html && nginx -g "daemon off;"'
+      sh -c 'sed -i \
+         "s|PLACEHOLDER_API_BASE_URL|$$API_BASE_URL|g; \
+          s|PLACEHOLDER_API_SOCKET_URL|$$API_SOCKET_URL|g" \
+         /usr/share/nginx/html/index.html && nginx -g "daemon off;"'
     restart: unless-stopped
     networks:
       - xaosakipro_default

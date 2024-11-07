@@ -17,7 +17,8 @@ export class AccountsService {
   async getAccountsByUserId(userId: string): Promise<AccountDTO[]> {
     return this.accountModel
       .findAll({
-        where: { userId }
+        where: { userId },
+        order: [['name', 'DESC']]
       })
       .then((models) => models.map((model) => new AccountDTO(model)));
   }
