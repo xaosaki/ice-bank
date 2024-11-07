@@ -19,7 +19,8 @@ export default defineConfig({
     process.env.NODE_ENV !== 'production'
       ? {
           'window.config': {
-            VUE_APP_API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:3007'
+            VUE_APP_API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:3007',
+            VUE_APP_API_SOCKET_URL: process.env.API_SOCKET_URL || 'http://localhost:3001'
           }
         }
       : {},

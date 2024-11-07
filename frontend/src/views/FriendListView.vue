@@ -56,6 +56,7 @@ onBeforeUnmount(async () => {
           v-model="userId"
           placeholder="Friend ID"
           name="friendID"
+          @keyup.enter="handleAddClick"
         />
         <BaseButton class="w-1/4 py-3.5" :disabled="!userId" @click.prevent="handleAddClick"
           >Add</BaseButton

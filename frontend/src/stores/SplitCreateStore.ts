@@ -3,6 +3,7 @@ import { httpClientWithToken } from '@/api/HttpClient';
 import type { SplitParams, SplitPart } from '@/stores/interfaces/SplitCreateInterfaces';
 import type { Transaction } from '@/stores/interfaces/TransactionInterfaces';
 import type { Friend } from '@/stores/interfaces/FriendInterfaces';
+import { v4 as uuidv4 } from 'uuid';
 
 const SPLIT_CREATE_URL = '/api/v1/splits/outgoing';
 
@@ -17,7 +18,7 @@ export const useSplitCreateStore = defineStore('split-create', {
       try {
         const newSplit: SplitParams = {
           users: this.partsWithoutMe,
-          splitId: crypto.randomUUID(),
+          splitId: uuidv4(),
           amount: this.sumWithoutMe,
           receipt: null,
           transactionId

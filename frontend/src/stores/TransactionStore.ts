@@ -7,6 +7,7 @@ import type {
 } from '@/stores/interfaces/TransactionInterfaces';
 import { faker } from '@faker-js/faker';
 import { mapSplitByTransaction } from '@/stores/mappers/transaction/SplitByTransactionMapper';
+import { v4 as uuidv4 } from 'uuid';
 
 const TRANSACTION_URL = '/api/v1/transactions';
 const OUT_SPLIT_URL = '/api/v1/splits/outgoing';
@@ -46,7 +47,7 @@ export const useTransactionStore = defineStore('transaction', {
       try {
         const fakeCompany = faker.company.name();
         const transaction = {
-          transactionId: crypto.randomUUID(),
+          transactionId: uuidv4(),
           accountId: accountId,
           amount: parseFloat(faker.finance.amount({ min: 1, max: 200, dec: 2 })),
           description: `${fakeCompany} #${faker.number.int(9999)} ${faker.location.city()}`,
@@ -60,7 +61,7 @@ export const useTransactionStore = defineStore('transaction', {
           merchant: {
             name: fakeCompany,
             logo: faker.image.urlLoremFlickr({ width: 100, height: 100, category: 'business' }),
-            merchantId: crypto.randomUUID(),
+            merchantId: uuidv4(),
             mcc: faker.finance.creditCardNumber('####')
           },
           note: `Bought ${faker.commerce.product()} and ${faker.commerce.product()}`

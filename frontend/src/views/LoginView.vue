@@ -55,6 +55,7 @@ onBeforeUnmount(() => {
           type="password"
           class="mb-4"
           :required="isFieldRequired('password')"
+          @keyup.enter="!isFormInvalid ? userStore.login(form) : ''"
         />
       </form>
 

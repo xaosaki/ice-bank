@@ -12,6 +12,11 @@ import { SplitPart } from '../common/models/split-part.model';
 import { Account } from '../common/models/account.model';
 import { Sequelize } from 'sequelize-typescript';
 import { S3Service } from '../common/services/s3.service';
+import { NotificationService } from '../common/services/notification.service';
+import {
+  NotificationMessageDTO,
+  NotificationMessageType
+} from '../common/dto/notification-message.dto';
 
 @Injectable()
 export class IncomingSplitsService {
@@ -21,7 +26,8 @@ export class IncomingSplitsService {
     @InjectModel(User) private readonly userModel: typeof User,
     @InjectModel(Account) private readonly accountModel: typeof Account,
     private readonly sequelize: Sequelize,
-    private readonly s3Service: S3Service
+    private readonly s3Service: S3Service,
+    private readonly notificationService: NotificationService
   ) {}
 
   async getIncomingSplits(userId: string) {
@@ -75,6 +81,15 @@ export class IncomingSplitsService {
         throw new BadRequestException('Split part is already processed');
       }
 
+      const split = await this.splitModel.findOne({
+        where: { splitId },
+        transaction
+      });
+
+      if (!split) {
+        throw new BadRequestException('Split not found');
+      }
+
       // Payment simulation
       if (action === 'accept') {
         const account = await this.accountModel.findOne({
@@ -85,15 +100,6 @@ export class IncomingSplitsService {
 
         if (!account) {
           throw new ForbiddenException('Account not authorized for this user');
-        }
-
-        const split = await this.splitModel.findOne({
-          where: { splitId },
-          transaction
-        });
-
-        if (!split) {
-          throw new BadRequestException('Split not found');
         }
 
         const transactionAmount = Number(part.amount);
@@ -140,6 +146,20 @@ export class IncomingSplitsService {
       }
 
       await transaction.commit();
+
+      const payer = (await this.userModel.findByPk(userId)) as User;
+
+      await this.notificationService.sendMessage(
+        new NotificationMessageDTO(
+          split.fromUserId,
+          'system',
+          action === 'accept'
+            ? NotificationMessageType.OUTGOING_SPLIT_ACCEPT
+            : NotificationMessageType.OUTGOING_SPLIT_DECLINE,
+          `${payer.firstName} ${payer.lastName} ${action} your split for $${part.amount}`
+        )
+      );
+
       return { message: 'Split processed successfully' };
     } catch (error) {
       await transaction.rollback();

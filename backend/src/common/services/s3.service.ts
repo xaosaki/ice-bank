@@ -12,11 +12,12 @@ export class S3Service {
   constructor() {
     this.s3 = new AWS.S3({
       endpoint: process.env.S3_HOST || '',
+      s3ForcePathStyle: true,
       credentials: {
         accessKeyId: process.env.S3_KEY || '',
         secretAccessKey: process.env.S3_SECRET || ''
       },
-      s3ForcePathStyle: true
+      region: 'unexisting-region' // docker hack ¯\_(ツ)_/¯
     });
   }
 

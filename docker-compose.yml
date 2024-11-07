@@ -21,10 +21,17 @@ services:
       S3_BUCKET: ${S3_BUCKET}
       S3_HOST: ${S3_HOST}
       UI_HOST: http://localhost:8088
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      NOTIFICATION_CHANEL: ${NOTIFICATION_CHANEL}
+      SOCKET_PORT: ${SOCKET_PORT}
     ports:
       - ${BACK_EXTERNAL_PORT}:${BACK_INTERNAL_PORT}
+      - ${SOCKET_PORT}:${SOCKET_PORT}
     depends_on:
       - db
+      - redis-stack
+      - minio
 
   vue-app:
     build:
@@ -35,8 +42,12 @@ services:
       - ${UI_PORT}:80
     environment:
       API_BASE_URL: http://localhost:${BACK_EXTERNAL_PORT}
+      API_SOCKET_URL: http://localhost:${SOCKET_PORT}
     command: >
-      sh -c 'sed -i "s|PLACEHOLDER_API_BASE_URL|$$API_BASE_URL|g" /usr/share/nginx/html/index.html && nginx -g "daemon off;"'
+      sh -c 'sed -i \
+         "s|PLACEHOLDER_API_BASE_URL|$$API_BASE_URL|g; \
+          s|PLACEHOLDER_API_SOCKET_URL|$$API_SOCKET_URL|g" \
+         /usr/share/nginx/html/index.html && nginx -g "daemon off;"'
 
   db:
     image: postgres:16
@@ -51,6 +62,7 @@ services:
 
   minio:
     image: minio/minio
+    container_name: minio
     environment:
       MINIO_ROOT_USER: ${MINIO_USERNAME}
       MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
@@ -60,6 +72,15 @@ services:
     command: server --console-address ":9001" /data
     volumes:
       - ./local-minio-data:/data
+
+  redis-stack:
+    image: redis/redis-stack:latest
+    container_name: redis-stack
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    restart: unless-stopped
+
 
   db-test:
     image: postgres:16

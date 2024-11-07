@@ -38,6 +38,7 @@ const handleCreateSplit = async () => {
     status: 'OK',
     action: 'Done',
     heading: `Request${splitCreateStore.partsWithoutMe.length > 1 ? 's' : ''} sent`,
+    next: `/accounts/${transactionStore.selected.accountId!}`,
     message:
       `${splitCreateStore.partsWithoutMe.map((user) => user.firstName).join(', ')}` +
       ` will receive notification${splitCreateStore.partsWithoutMe.length > 1 ? 's' : ''}`

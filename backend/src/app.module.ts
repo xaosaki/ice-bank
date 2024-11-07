@@ -14,6 +14,7 @@ import { OutgoingSplitsModule } from './outgoing-splits/outgoing-splits.module';
 import { IncomingSplitsModule } from './incoming-splits/incoming-splits.module';
 import { FriendsModule } from './friends/friends.module';
 import { ProfileModule } from './profile/profile.module';
+import { EventsModule } from './common/modules/events/events.module';
 
 dotenv.config();
 
@@ -39,7 +40,8 @@ dotenv.config();
     TransactionsModule,
     OutgoingSplitsModule,
     IncomingSplitsModule,
-    FriendsModule
+    FriendsModule,
+    EventsModule
   ],
   controllers: [HealthController],
   providers: [

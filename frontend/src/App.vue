@@ -4,6 +4,7 @@ import { onMounted, watch } from 'vue';
 import { useUserStore } from '@/stores/UserStore';
 import { useInSplitStore } from '@/stores/InSplitStore';
 import { useAccountStore } from '@/stores/AccountStore';
+import { useSocket } from '@/composables/UseSocket';
 
 const userStore = useUserStore();
 const accountsStore = useAccountStore();
@@ -17,9 +18,20 @@ const loadData = () => {
   }
 };
 
+const initSocket = () => {
+  if (userStore.isAuthenticated) {
+    // Инициализируем сокет через useSocket
+    const { initializeSocket } = useSocket(userStore.token);
+    initializeSocket();
+  }
+};
+
 watch(() => userStore.isAuthenticated, loadData);
 
-onMounted(loadData);
+onMounted(() => {
+  loadData();
+  initSocket();
+});
 </script>
 
 <template>

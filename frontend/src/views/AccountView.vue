@@ -49,7 +49,14 @@ const checkAccountsAndUrl = async () => {
   }
 };
 
-watch(() => accountsStore.accounts, checkAccountsAndUrl);
+watch(
+  () => accountsStore.accounts,
+  async (_, prevAccounts) => {
+    if (!prevAccounts.length) {
+      await checkAccountsAndUrl();
+    }
+  }
+);
 
 onMounted(checkAccountsAndUrl);
 

@@ -17,6 +17,10 @@ services:
       S3_SECRET: ${S3_SECRET}
       S3_BUCKET: ${S3_BUCKET}
       S3_HOST: ${S3_HOST}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      NOTIFICATION_CHANEL: ${NOTIFICATION_CHANEL}
+      SOCKET_PORT: ${SOCKET_PORT}
     restart: unless-stopped
     networks:
       - xaosakipro_default

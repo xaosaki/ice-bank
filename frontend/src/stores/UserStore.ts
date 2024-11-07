@@ -13,6 +13,8 @@ import { useOutSplitStore } from '@/stores/OutSplitStore';
 import { useFriendStore } from '@/stores/FriendStore';
 import { useAccountStore } from '@/stores/AccountStore';
 import { useSplitCreateStore } from '@/stores/SplitCreateStore';
+import { useSocket } from '@/composables/UseSocket';
+import { v4 as uuidv4 } from 'uuid';
 
 const AUTH_URL = '/api/v1/auth';
 const PROFILE_URL = '/api/v1/profile';
@@ -30,6 +32,8 @@ export const useUserStore = defineStore('user', {
         const response = await httpClient.post<LoginResponse>(`${AUTH_URL}/login`, params);
         this.token = response.data.accessToken;
         localStorage.setItem('token', response.data.accessToken);
+        const { initializeSocket } = useSocket(this.token);
+        initializeSocket();
         await router.push(`/accounts`);
       } catch (e: any) {
         console.log('Error during login', e);
@@ -40,7 +44,7 @@ export const useUserStore = defineStore('user', {
     async register(params: RegisterParams) {
       this.serverError = null;
       try {
-        const userId = crypto.randomUUID();
+        const userId = uuidv4();
         await httpClient.post(`${AUTH_URL}/register`, { ...params, userId });
         await this.login({ email: params.email, password: params.password });
       } catch (e: any) {
@@ -63,6 +67,9 @@ export const useUserStore = defineStore('user', {
         await httpClientWithToken.post(`${AUTH_URL}/logout`);
         this.token = null;
         this.user = {} as Profile;
+        const { disconnectSocket } = useSocket(this.token);
+        disconnectSocket();
+
         const stores = [
           useTransactionStore(),
           useInSplitStore(),
@@ -73,7 +80,6 @@ export const useUserStore = defineStore('user', {
         ];
 
         stores.forEach((store) => store.$reset());
-
         localStorage.removeItem('token');
         router.push(`/login`).then();
       } catch (e) {

@@ -7,6 +7,11 @@ import { Transaction } from '../common/models/transaction.model';
 import { Sequelize } from 'sequelize-typescript';
 import { OutgoingSplitDTO } from './dto/outgoing-split.dto';
 import { User } from '../common/models/user.model';
+import { NotificationService } from '../common/services/notification.service';
+import {
+  NotificationMessageDTO,
+  NotificationMessageType
+} from '../common/dto/notification-message.dto';
 
 @Injectable()
 export class OutgoingSplitsService {
@@ -14,7 +19,8 @@ export class OutgoingSplitsService {
     @InjectModel(Split) private readonly splitModel: typeof Split,
     @InjectModel(SplitPart) private readonly splitPartModel: typeof SplitPart,
     @InjectModel(Transaction) private readonly transactionModel: typeof Transaction,
-    private readonly sequelize: Sequelize
+    private readonly sequelize: Sequelize,
+    private readonly notificationService: NotificationService
   ) {}
 
   async createSplit(createSplitDto: CreateSplitDTO, userId: string) {
@@ -62,6 +68,17 @@ export class OutgoingSplitsService {
       await transaction.rollback();
       throw error;
     }
+
+    createSplitDto.users.forEach((user) => {
+      this.notificationService.sendMessage(
+        new NotificationMessageDTO(
+          user.userId,
+          'system',
+          NotificationMessageType.NEW_INCOMING_SPLIT,
+          ''
+        )
+      );
+    });
 
     const split = (await this.splitModel.findOne({
       where: { splitId: createSplitDto.splitId },
