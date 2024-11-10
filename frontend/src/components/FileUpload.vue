@@ -23,6 +23,7 @@ const uploadFile = async (event: any) => {
 <template>
   <div>
     <button
+      data-test-id="upload-file-button"
       class="rounded bg-surface hover:bg-surfaceHover flex justify-center items-center w-16 h-16"
       @click="openFileDialog"
     >

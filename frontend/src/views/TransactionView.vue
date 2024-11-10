@@ -80,6 +80,7 @@ onBeforeUnmount(async () => {
       />
     </ul>
     <RichButton
+      data-test-id="create-split-button"
       class="w-full mb-4"
       :icon="faHandHoldingDollar"
       :text="'Split this bill ' + (transactionStore.splitsBySelected.length ? ' (again)' : '')"

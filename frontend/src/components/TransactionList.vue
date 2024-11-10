@@ -14,7 +14,7 @@ defineProps<{
 
 <template>
   <div class="transaction-list">
-    <ul>
+    <ul data-test-id="transaction-list">
       <li v-for="(group, id) in transactions" :key="id" class="mb-6">
         <div class="flex justify-between items-center text-primaryText text-sm font-semibold mb-2">
           <span>{{ 'date' in group ? formatDayDate(group.date) : group.status }}</span>

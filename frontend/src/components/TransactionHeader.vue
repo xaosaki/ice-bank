@@ -24,21 +24,33 @@ const words = computed(() => {
 
 <template>
   <div>
-    <p v-if="showAmount && date" class="text-sm font-semibold mb-3.5">
+    <p
+      data-test-id="transaction-overline"
+      v-if="showAmount && date"
+      class="text-sm font-semibold mb-3.5"
+    >
       {{ formatDateAndTime(date) }}
     </p>
     <div class="mb-5">
       <div class="text-primaryText rounded-lg flex items-center justify-between">
         <div class="flex items-center">
           <AvatarPro class="flex-shrink-0 mr-3" :first-word="words[0]" :last-word="words[1]" />
-          <p class="text-xl font-medium mr-4">{{ name }}</p>
+          <p data-test-id="transaction-title" class="text-xl font-medium mr-4">{{ name }}</p>
         </div>
 
-        <p class="text-primaryText" :class="showAmount ? 'text-2xl' : 'min-w-40 text-right'">
+        <p
+          data-test-id="transaction-side-block"
+          class="text-primaryText"
+          :class="showAmount ? 'text-2xl' : 'min-w-40 text-right'"
+        >
           {{ showAmount ? formatCurrency(amount) : formatDateAndTimeShort(date) }}
         </p>
       </div>
-      <p v-if="showSubHeader" class="text-secondaryText font-semibold text-sm mt-2">
+      <p
+        data-test-id="transaction-subtitle"
+        v-if="showSubHeader"
+        class="text-secondaryText font-semibold text-sm mt-2"
+      >
         POS transaction
       </p>
     </div>

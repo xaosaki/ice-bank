@@ -116,6 +116,7 @@ onBeforeUnmount(async () => {
 
       <h5 class="text-m font-semibold pb-3">Comment</h5>
       <BaseTextArea
+        data-test-id="comment"
         v-model="split.comment"
         name="comment"
         :placeholder="
@@ -129,11 +130,19 @@ onBeforeUnmount(async () => {
       v-if="split.answerStatus === 'Pending'"
       class="fixed w-full bottom-0 left-0 right-0 px-6 pb-12 md:max-w-5xl pt-6 bg-gradient-to-t from-background via-background via-95% to-transparent md:mx-auto"
     >
-      <BaseButton class="block w-full mb-4" @click="handleProcessClick(actions[0])">
+      <BaseButton
+        data-test-id="pay-now-button"
+        class="block w-full mb-4"
+        @click="handleProcessClick(actions[0])"
+      >
         Pay now</BaseButton
       >
 
-      <BaseButton class="block w-full" variant="danger" @click="handleProcessClick(actions[1])"
+      <BaseButton
+        data-test-id="decline-button"
+        class="block w-full"
+        variant="danger"
+        @click="handleProcessClick(actions[1])"
         >Decline split</BaseButton
       >
     </div>

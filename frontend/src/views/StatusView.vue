@@ -21,8 +21,13 @@ onBeforeUnmount(async () => {
 <template>
   <div class="flex flex-col items-center justify-between min-h-screen p-6 bg-background">
     <div class="mt-60 flex flex-col items-center">
-      <h1 class="text-2xl font-medium text-primaryText mb-7">{{ statusStore.heading }}</h1>
-      <p class="text-secondaryText text-center font-semibold mt-2 mb-16">
+      <h1 data-test-id="status-header" class="text-2xl font-medium text-primaryText mb-7">
+        {{ statusStore.heading }}
+      </h1>
+      <p
+        data-test-id="status-message"
+        class="text-secondaryText text-center font-semibold mt-2 mb-16"
+      >
         {{ statusStore.message }}
       </p>
 
@@ -33,6 +38,12 @@ onBeforeUnmount(async () => {
       />
     </div>
 
-    <BaseButton class="block w-full mb-4" @click="router.push(statusStore.next)"> OK</BaseButton>
+    <BaseButton
+      data-test-id="next-button"
+      class="block w-full mb-4"
+      @click="router.push(statusStore.next)"
+    >
+      OK</BaseButton
+    >
   </div>
 </template>

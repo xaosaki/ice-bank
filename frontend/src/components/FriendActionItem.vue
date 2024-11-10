@@ -26,6 +26,7 @@ const handleRemoveFriend = () => {
 
 <template>
   <button
+    data-test-id="friend-action-button"
     @click="handleAction"
     class="w-full flex items-center justify-between p-4 bg-surface rounded-lg"
     :class="actionType === 'checkbox' ? 'cursor-pointer' : 'cursor-default'"
@@ -47,6 +48,7 @@ const handleRemoveFriend = () => {
 
     <div v-else-if="actionType === 'remove'">
       <button
+        data-test-id="remove-friend-button"
         @click.stop="handleRemoveFriend"
         class="text-danger w-8 h-8 flex items-center justify-center"
       >

@@ -43,11 +43,16 @@ onBeforeUnmount(() => {
 <template>
   <div class="flex flex-col items-center justify-between min-h-screen p-6 bg-background">
     <div class="mt-14 w-full md:w-96 flex flex-col items-center">
-      <h1 class="text-2xl font-medium text-primaryText mb-12">Registration</h1>
+      <h1 data-test-id="registration-header" class="text-2xl font-medium text-primaryText mb-12">
+        Registration
+      </h1>
 
-      <div v-if="userStore.serverError">{{ userStore.serverError }}</div>
+      <div data-test-id="error-message" v-if="userStore.serverError">
+        {{ userStore.serverError }}
+      </div>
       <form class="w-full">
         <BaseInput
+          data-test-id="email-input"
           v-model="form.email"
           placeholder="example@mail.com"
           label="Email"
@@ -56,6 +61,7 @@ onBeforeUnmount(() => {
           :required="isFieldRequired('email')"
         />
         <BaseInput
+          data-test-id="password-input"
           v-model="form.password"
           placeholder="******"
           label="Password"
@@ -65,6 +71,7 @@ onBeforeUnmount(() => {
           :required="isFieldRequired('password')"
         />
         <BaseInput
+          data-test-id="first-name-input"
           v-model="form.firstName"
           placeholder="John"
           label="First name"
@@ -74,6 +81,7 @@ onBeforeUnmount(() => {
           :required="isFieldRequired('firstName')"
         />
         <BaseInput
+          data-test-id="middle-name-input"
           v-model="form.middleName"
           placeholder="Justin"
           label="Middle name"
@@ -83,6 +91,7 @@ onBeforeUnmount(() => {
           :required="isFieldRequired('middleName')"
         />
         <BaseInput
+          data-test-id="last-name-input"
           v-model="form.lastName"
           placeholder="Doe"
           label="Last name"
@@ -92,6 +101,7 @@ onBeforeUnmount(() => {
           :required="isFieldRequired('lastName')"
         />
         <BaseInput
+          data-test-id="phone-input"
           v-model="form.phone"
           placeholder="9991234567"
           label="Phone"
@@ -103,12 +113,13 @@ onBeforeUnmount(() => {
       </form>
 
       <BaseButton
+        data-test-id="register-button"
         class="block w-full mb-4"
         :disabled="isFormInvalid"
         @click="userStore.register(form)"
         >Submit</BaseButton
       >
-      <BaseLink :to="`/login`">Login</BaseLink>
+      <BaseLink data-test-id="login-link" :to="`/login`">Login</BaseLink>
     </div>
   </div>
 </template>

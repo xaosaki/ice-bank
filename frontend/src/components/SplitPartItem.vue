@@ -61,6 +61,7 @@ const record = computed(() => {
 
     <div class="flex items-center">
       <input
+        data-test-id="split-amount-input"
         v-if="mode === 'edit'"
         type="number"
         step=".01"

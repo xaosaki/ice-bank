@@ -26,7 +26,7 @@ const handleGenerateTransactionClick = async () => {
 watch(
   () => accountsStore.selectedAccountId,
   async (newAccountId, prevAccountId) => {
-    if (newAccountId !== prevAccountId) {
+    if (newAccountId && newAccountId !== prevAccountId) {
       await accountsStore.loadTransactions();
       await router.push({
         name: 'accounts',
@@ -71,14 +71,23 @@ onBeforeUnmount(async () => {
       <div class="flex justify-between items-center mb-4">
         <div class="text-lg">👋 Hey {{ userStore.user.firstName }}!</div>
         <!--          <font-awesome-icon :icon="faCog" class="text-primaryText w-5 h-5" />-->
-        <button v-if="userStore.isAuthenticated" type="button" @click="userStore.logout">
+        <button
+          data-test-id="logout-button"
+          v-if="userStore.isAuthenticated"
+          type="button"
+          @click="userStore.logout"
+        >
           <font-awesome-icon :icon="faRightFromBracket" class="w-6 h-6" />
         </button>
       </div>
       <AccountOverview v-if="accountsStore.accounts.length" />
     </LargeHeader>
     <section class="px-6 pt-8">
-      <BaseButton @click="handleGenerateTransactionClick" variant="secondary" class="w-full mb-4"
+      <BaseButton
+        data-test-id="generate-transaction"
+        @click="handleGenerateTransactionClick"
+        variant="secondary"
+        class="w-full mb-4"
         >Generate transaction</BaseButton
       >
       <TransactionList :transactions="accountsStore.transactions" type="account" />

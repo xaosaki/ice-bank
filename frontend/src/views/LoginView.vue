@@ -35,11 +35,14 @@ onBeforeUnmount(() => {
 <template>
   <div class="flex flex-col items-center justify-between min-h-screen p-6 bg-background">
     <div class="mt-14 w-full md:w-96 flex flex-col items-center">
-      <h1 class="text-2xl font-medium text-primaryText mb-12">Login</h1>
+      <h1 data-test-id="login-header" class="text-2xl font-medium text-primaryText mb-12">Login</h1>
 
-      <div v-if="userStore.serverError">{{ userStore.serverError }}</div>
+      <div data-test-id="error-message" v-if="userStore.serverError">
+        {{ userStore.serverError }}
+      </div>
       <form class="w-full">
         <BaseInput
+          data-test-id="email-input"
           v-model="form.email"
           placeholder="example@mail.com"
           label="Email"
@@ -48,6 +51,7 @@ onBeforeUnmount(() => {
           :required="isFieldRequired('email')"
         />
         <BaseInput
+          data-test-id="password-input"
           v-model="form.password"
           placeholder="******"
           label="Password"
@@ -59,10 +63,14 @@ onBeforeUnmount(() => {
         />
       </form>
 
-      <BaseButton class="block w-full mb-4" :disabled="isFormInvalid" @click="userStore.login(form)"
+      <BaseButton
+        data-test-id="login-button"
+        class="block w-full mb-4"
+        :disabled="isFormInvalid"
+        @click="userStore.login(form)"
         >Submit</BaseButton
       >
-      <BaseLink :to="`/register`">Register</BaseLink>
+      <BaseLink data-test-id="register-link" :to="`/register`">Register</BaseLink>
     </div>
   </div>
 </template>

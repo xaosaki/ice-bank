@@ -153,7 +153,7 @@ There is no need to manually create entries in the database; all necessary data 
 
 ## Running Backend E2E Tests
 
-To run E2E tests for the backend (`test:e2e`), you need to start the test database. Use Docker Compose to launch the `db-test` database:
+To run E2E tests for the backend, you need to start the test database. Use Docker Compose to launch the `db-test` database:
 
 ```bash
 # Launch the test database
@@ -162,6 +162,18 @@ docker compose up -d db-test
 
 After that, you can run the tests with the following command:
 ```bash
+cd backend
+pnpm test:e2e
+```
+
+
+## Running Backend E2E Tests
+
+To run E2E tests for frontend, you need to start the backend and to register 2 test users and put their credentials into file `/frontend/cypress/utils/consts.ts`.
+
+After that, you can run the tests with the following command:
+```bash
+cd frontend
 pnpm test:e2e
 ```
 

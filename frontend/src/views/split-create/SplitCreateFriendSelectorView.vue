@@ -67,6 +67,7 @@ onMounted(async () => {
       class="fixed w-full bottom-0 left-0 right-0 px-6 pb-12 pt-6 bg-gradient-to-t from-background via-background via-95% to-transparent md:max-w-5xl md:mx-auto"
     >
       <BaseButton
+        data-test-id="next-button"
         class="block w-full"
         @click="router.push(`/split-create/${transactionStore.selectedId}/params`)"
         :disabled="splitCreateStore.partsWithoutMe.length === 0"

@@ -102,7 +102,12 @@ const handleCreateSplit = async () => {
     <div
       class="fixed w-full bottom-0 left-0 right-0 px-6 pb-12 pt-6 bg-gradient-to-t from-background via-background via-95% to-transparent md:max-w-5xl md:mx-auto"
     >
-      <BaseButton class="block w-full mb-4" @click="handleCreateSplit" :disabled="isSubmitDisabled">
+      <BaseButton
+        data-test-id="ask-button"
+        class="block w-full mb-4"
+        @click="handleCreateSplit"
+        :disabled="isSubmitDisabled"
+      >
         {{
           isSubmitDisabled ? 'No receivers' : `Ask ${formatCurrency(splitCreateStore.sumWithoutMe)}`
         }}</BaseButton
