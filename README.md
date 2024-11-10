@@ -16,9 +16,10 @@ Application for IcePanel engineering interview task
 8. [Setting Up Minio](#setting-up-minio)
 9. [User Registration](#user-registration)
 10. [Running Backend E2E Tests](#running-backend-e2e-tests)
-11. [Additional Commands](#additional-commands)
-12. [Swagger Documentation](#swagger-documentation)
-13. [Notes](#notes)
+11. [Running Frontend E2E Tests](#running-frontend-e2e-tests)
+12. [Additional Commands](#additional-commands)
+13. [Swagger Documentation](#swagger-documentation)
+14. [Notes](#notes)
 
 ## Description
 
@@ -167,7 +168,7 @@ pnpm test:e2e
 ```
 
 
-## Running Backend E2E Tests
+## Running Frontend E2E Tests
 
 To run E2E tests for frontend, you need to start the backend and to register 2 test users and put their credentials into file `/frontend/cypress/utils/consts.ts`.
 
